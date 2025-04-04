@@ -14,6 +14,12 @@ const HeaderSection = z.object({
     linkedin: z.string().describe('LinkedIn username').optional(),
     github: z.string().describe('GitHub username').optional(),
   }),
+  cta: z
+    .object({
+      label: z.string().max(40).describe('Call to action label').optional(),
+      url: z.string().url().describe('Call to action URL').optional(),
+    })
+    .optional(),
   skills: z
     .array(z.string())
     .max(15)

@@ -10,10 +10,14 @@ export const FullResume = ({
   resume,
   profilePicture,
   allSkills,
+  isEditMode = false,
+  onCtaChange,
 }: {
   resume?: ResumeData | null;
   profilePicture?: string;
   allSkills: string[];
+  isEditMode?: boolean;
+  onCtaChange?: (cta: { label: string; url: string } | undefined) => void;
 }) => {
   if (!resume) {
     return <LoadingFallback message="Loading Resume..." />;
@@ -24,7 +28,12 @@ export const FullResume = ({
       className="mx-auto w-full max-w-2xl space-y-8 bg-white print:space-y-4 my-8 px-4"
       aria-label="Resume Content"
     >
-      <Header header={resume?.header} picture={profilePicture} />
+      <Header
+        header={resume?.header}
+        picture={profilePicture}
+        isEditMode={isEditMode}
+        onCtaChange={onCtaChange}
+      />
 
       <div className="flex flex-col gap-6">
         <Summary summary={resume?.summary} />

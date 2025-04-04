@@ -7,6 +7,7 @@ import { useUserActions } from '@/hooks/useUserActions';
 import { getSelfSoUrl } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { toast } from 'sonner';
 
@@ -14,10 +15,57 @@ export default function PreviewClient() {
   const { user } = useUser();
   const { resumeQuery, toggleStatusMutation, usernameQuery } = useUserActions();
   const [showModalSiteLive, setModalSiteLive] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const queryClient = useQueryClient();
 
   if (resumeQuery.isLoading || usernameQuery.isLoading || !usernameQuery.data) {
     return <LoadingFallback message="Loading..." />;
   }
+
+  // Handle CTA changes
+  const handleCtaChange = async (
+    cta: { label: string; url: string } | undefined
+  ) => {
+    if (!resumeQuery.data?.resume) return;
+
+    const updatedResume = {
+      ...resumeQuery.data.resume,
+      resumeData: {
+        ...resumeQuery.data.resume.resumeData,
+        header: {
+          ...resumeQuery.data.resume.resumeData.header,
+          cta: cta,
+        },
+      },
+    };
+
+    try {
+      // Optimistically update the cache
+      queryClient.setQueryData(['resume'], {
+        resume: updatedResume,
+      });
+
+      // Send update to server
+      const response = await fetch('/api/resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedResume),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update resume');
+      }
+
+      toast.success('CTA updated successfully');
+      setIsEditMode(false);
+    } catch (error) {
+      // Revert to original data on error
+      queryClient.setQueryData(['resume'], resumeQuery.data);
+      toast.error('Failed to update CTA');
+    }
+  };
 
   const CustomLiveToast = () => (
     <div className="w-fit min-w-[360px] h-[44px] items-center justify-between relative rounded-md bg-[#eaffea] border border-[#009505] shadow-md flex flex-row gap-2 px-2">
@@ -92,6 +140,24 @@ export default function PreviewClient() {
           }}
           isChangingStatus={toggleStatusMutation.isPending}
         />
+
+        {/* CTA Edit Toggle Button */}
+        <div className="flex justify-end mt-2">
+          <button
+            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+            onClick={() => setIsEditMode(!isEditMode)}
+          >
+            {isEditMode ? (
+              <>Done Editing</>
+            ) : (
+              <>
+                {resumeQuery.data?.resume?.resumeData?.header?.cta?.label
+                  ? 'Edit Call-to-Action Button'
+                  : 'Add Call-to-Action Button'}
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-neutral-300 flex items-center justify-between px-4">
@@ -99,6 +165,8 @@ export default function PreviewClient() {
           resume={resumeQuery.data?.resume?.resumeData}
           profilePicture={user?.imageUrl}
           allSkills={resumeQuery.data?.resume?.resumeData?.header.skills || []}
+          isEditMode={isEditMode}
+          onCtaChange={handleCtaChange}
         />
       </div>
 
