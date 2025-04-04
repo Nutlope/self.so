@@ -20,6 +20,7 @@ export const generateResumeObject = async (resumeText: string) => {
     - If the resume text does not include an 'about' section or specfic skills mentioned, please generate appropriate content for these sections based on the context of the resume and based on the job role.
     - For the about section: Create a professional summary that highlights the candidate's experience, expertise, and career objectives.
     - For the skills: Generate a maximum of 10 skills taken from the ones mentioned in the resume text or based on the job role / job title infer some if not present.
+    - Do not generate a CTA (call-to-action) - this is an optional field that the user can add manually later.
 
     ## Resume text:
 

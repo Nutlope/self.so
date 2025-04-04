@@ -5,6 +5,9 @@ import {
   Github,
   Twitter,
   Linkedin,
+  ExternalLink,
+  Pencil,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -42,9 +45,13 @@ function SocialButton({ href, icon: Icon, label }: SocialButtonProps) {
 export function Header({
   header,
   picture,
+  isEditMode = false,
+  onCtaChange,
 }: {
   header: ResumeDataSchemaType['header'];
   picture?: string;
+  isEditMode?: boolean;
+  onCtaChange?: (cta: { label: string; url: string } | undefined) => void;
 }) {
   const prefixUrl = (stringToFix?: string) => {
     if (!stringToFix) return undefined;
@@ -83,7 +90,7 @@ export function Header({
           <a
             className="inline-flex gap-x-1.5 align-baseline leading-none hover:underline text-[#9CA0A8]"
             href={`https://www.google.com/maps/search/${encodeURIComponent(
-              header.location,
+              header.location
             )}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -132,6 +139,79 @@ export function Header({
               label="LinkedIn"
             />
           )}
+          {!isEditMode && header.cta?.label && header.cta?.url && (
+            <SocialButton
+              href={prefixUrl(header.cta.url) || ''}
+              icon={ExternalLink}
+              label={header.cta.label}
+            />
+          )}
+          {isEditMode && onCtaChange && (
+            <Button
+              className="size-8"
+              variant="outline"
+              size="icon"
+              title={
+                header.cta?.label
+                  ? 'Edit call-to-action button'
+                  : 'Add call-to-action button'
+              }
+              onClick={() => {
+                // Prepare default values for the modal inputs
+                const label = header.cta?.label || '';
+                const url = header.cta?.url || '';
+
+                // Use browser dialog to edit CTA for simplicity
+                const newLabel = window.prompt(
+                  'Enter CTA label (max 40 characters):',
+                  label
+                );
+                if (newLabel === null) return; // User canceled
+
+                const newUrl = window.prompt('Enter CTA URL:', url);
+                if (newUrl === null) return; // User canceled
+
+                // Validate
+                if (newLabel.length > 40) {
+                  alert('Label must be 40 characters or less');
+                  return;
+                }
+
+                // Validate URL format
+                try {
+                  if (newLabel && newUrl) {
+                    new URL(
+                      newUrl.startsWith('http') ? newUrl : `https://${newUrl}`
+                    );
+                    onCtaChange({
+                      label: newLabel,
+                      url: newUrl,
+                    });
+                  } else if (!newLabel && !newUrl) {
+                    // Both empty means remove the CTA
+                    onCtaChange(undefined);
+                  } else {
+                    alert(
+                      'Both label and URL must be provided or both must be empty'
+                    );
+                  }
+                } catch (e) {
+                  alert('Please enter a valid URL');
+                }
+              }}
+            >
+              {header.cta?.label ? (
+                <Pencil className="size-4" aria-hidden="true" />
+              ) : (
+                <Plus className="size-4" aria-hidden="true" />
+              )}
+            </Button>
+          )}
+          {isEditMode && !header.cta?.label && (
+            <div className="text-xs text-gray-400 italic flex items-center ml-1">
+              ← Add a custom button
+            </div>
+          )}
         </div>
 
         <div
@@ -164,6 +244,17 @@ export function Header({
             >
               {header.contacts.phone}
             </a>
+          )}
+          {!isEditMode && header.cta?.label && header.cta?.url && (
+            <>
+              <span aria-hidden="true">/</span>
+              <a
+                className="underline hover:text-foreground/70"
+                href={prefixUrl(header.cta.url) || ''}
+              >
+                {header.cta.label}
+              </a>
+            </>
           )}
         </div>
       </div>

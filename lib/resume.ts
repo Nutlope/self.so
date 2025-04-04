@@ -16,6 +16,12 @@ const HeaderSection = z.object({
     .string()
     .describe("Location with format 'City, Country, Timezone'"),
   contacts: HeaderContactsSchema,
+  cta: z
+    .object({
+      label: z.string().max(40).describe('Call to action label').optional(),
+      url: z.string().url().describe('Call to action URL').optional(),
+    })
+    .optional(),
   skills: z
     .array(z.string())
     .max(15)
