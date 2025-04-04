@@ -1,19 +1,21 @@
 import { z } from 'zod';
 
+const HeaderContactsSchema = z.object({
+  website: z.string().describe('Personal website or portfolio URL'),
+  email: z.string().describe('Email address').optional(),
+  phone: z.string().describe('Phone number').optional(),
+  twitter: z.string().describe('Twitter/X username').optional(),
+  linkedin: z.string().describe('LinkedIn username').optional(),
+  github: z.string().describe('GitHub username').optional(),
+});
+
 const HeaderSection = z.object({
   name: z.string(),
   shortAbout: z.string().describe('Short description of your profile'),
   location: z
     .string()
     .describe("Location with format 'City, Country, Timezone'"),
-  contacts: z.object({
-    website: z.string().describe('Personal website or portfolio URL'),
-    email: z.string().describe('Email address').optional(),
-    phone: z.string().describe('Phone number').optional(),
-    twitter: z.string().describe('Twitter/X username').optional(),
-    linkedin: z.string().describe('LinkedIn username').optional(),
-    github: z.string().describe('GitHub username').optional(),
-  }),
+  contacts: HeaderContactsSchema,
   cta: z
     .object({
       label: z.string().max(40).describe('Call to action label').optional(),

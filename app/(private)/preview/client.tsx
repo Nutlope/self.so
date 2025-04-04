@@ -26,14 +26,15 @@ export default function PreviewClient() {
   const handleCtaChange = async (
     cta: { label: string; url: string } | undefined
   ) => {
-    if (!resumeQuery.data?.resume) return;
+    const resumeData = resumeQuery.data?.resume?.resumeData;
+    if (!resumeQuery.data?.resume || !resumeData || !resumeData.header) return;
 
     const updatedResume = {
       ...resumeQuery.data.resume,
       resumeData: {
-        ...resumeQuery.data.resume.resumeData,
+        ...resumeData,
         header: {
-          ...resumeQuery.data.resume.resumeData.header,
+          ...resumeData.header,
           cta: cta,
         },
       },
@@ -164,7 +165,7 @@ export default function PreviewClient() {
         <FullResume
           resume={resumeQuery.data?.resume?.resumeData}
           profilePicture={user?.imageUrl}
-          allSkills={resumeQuery.data?.resume?.resumeData?.header.skills || []}
+          allSkills={resumeQuery.data?.resume?.resumeData?.header?.skills || []}
           isEditMode={isEditMode}
           onCtaChange={handleCtaChange}
         />

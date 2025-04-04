@@ -19,8 +19,8 @@ export async function getUserData(username: string) {
     [user_id],
     {
       tags: ['users'],
-      revalidate: 86400, // 1 day in seconds
-    },
+      revalidate: 60, // 1 minute in seconds
+    }
   );
   const clerkUser = await getCachedUser();
 

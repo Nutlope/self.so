@@ -42,7 +42,7 @@ export const FullResume = ({
 
         <Education educations={resume.education} />
 
-        <Skills skills={allSkills} />
+        <Skills skills={resume.header.skills} />
       </div>
     </section>
   );
