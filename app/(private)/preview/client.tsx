@@ -71,7 +71,7 @@ export default function PreviewClient() {
 
   return (
     <div className="w-full min-h-screen bg-background flex flex-col gap-4 pb-8">
-      <div className="max-w-3xl mx-auto w-full md:px-0 px-4">
+      <div className="max-w-[50rem] mx-auto w-full md:px-0 px-4">
         <PreviewActionbar
           initialUsername={usernameQuery.data.username}
           status={resumeQuery.data?.resume?.status}
@@ -94,7 +94,7 @@ export default function PreviewClient() {
         />
       </div>
 
-      <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-neutral-300 flex items-center justify-between px-4">
+      <div className="max-w-[50rem] mx-auto w-full md:rounded-lg border-[0.5px] border-neutral-300 flex items-center justify-between px-4">
         <FullResume
           resume={resumeQuery.data?.resume?.resumeData}
           profilePicture={user?.imageUrl}

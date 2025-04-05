@@ -2,10 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { cn, getSelfSoUrl } from '@/lib/utils';
-import { ExternalLink, Pencil } from 'lucide-react';
+import { ExternalLink, Pencil,QrCode } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import UsernameEditorView from './UsernameEditorView';
+import QRCode from 'qrcode';
 
 export type PublishStatuses = 'draft' | 'live';
 
@@ -31,6 +32,24 @@ export default function PreviewActionbar({
       await onStatusChange(newStatus);
     }
   };
+
+
+  const handleQRDownload = async () => {
+    if (!initialUsername || status !== 'live') return;
+
+    const portfolioUrl = getSelfSoUrl(initialUsername);
+    console.log(portfolioUrl)
+    const canvas = document.createElement('canvas');
+
+    await QRCode.toCanvas(canvas, portfolioUrl, { width: 300 });
+
+    const image = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = `${initialUsername}-qr.png`;
+    link.click();
+  };
+
 
   return (
     <>
@@ -95,9 +114,9 @@ export default function PreviewActionbar({
               onClick={handleStatusChange}
               className={`flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto ${
                 status === 'draft'
-                  ? 'bg-design-black hover:bg-[#333333] text-[#fcfcfc]'
-                  : 'bg-design-white text-design-black hover:bg-gray-100'
-              }`}
+                ? 'bg-design-black hover:bg-[#333333] text-[#fcfcfc]'
+                : 'bg-design-white text-design-black hover:bg-gray-100'
+                }`}
             >
               {isChangingStatus ? (
                 <>
@@ -109,6 +128,18 @@ export default function PreviewActionbar({
                 </span>
               )}
             </Button>
+
+            {status === 'live' && (
+              <Button
+                onClick={handleQRDownload}
+                className="flex items-center gap-2 bg-white border text-black hover:bg-gray-100 min-h-8 px-3 py-1.5"
+              >
+                <QrCode className="w-6 h-6 text-gray-600" />
+                QR
+              </Button>
+            )}
+
+
             {status === 'live' && (
               <Button className="flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto">
                 <a
