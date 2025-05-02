@@ -37,7 +37,6 @@
 ## Future tasks
 
 - [ ] Change llama 3.3 to Qwen 2.5 on the app
-- [ ] Add Helicone for observability
 - [ ] add error logging to make sure to fix any bugs
 - [ ] add ability to get to the "preview" page if you have a site already
 - [ ] ability to edit links in the site
