@@ -70,6 +70,18 @@ export default function UploadPageClient() {
           personal site
         </h1>
 
+        {resume?.resumeData && (
+          <div className="mb-6">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => router.push('/preview')}
+            >
+              Go to Preview
+            </Button>
+          </div>
+        )}
+
         <div className="relative mx-2.5">
           {fileState.status !== 'empty' && (
             <button
