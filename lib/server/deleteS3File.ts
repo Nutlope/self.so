@@ -1,11 +1,10 @@
 import AWS from 'aws-sdk';
 
+// Configure AWS with credentials from environment variables
 AWS.config.update({
-  region: process.env.S3_UPLOAD_REGION!!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!!,
-  },
+  region: process.env.S3_UPLOAD_REGION,
+  accessKeyId: process.env.S3_UPLOAD_KEY,
+  secretAccessKey: process.env.S3_UPLOAD_SECRET,
 });
 
 export const deleteS3File = async ({
@@ -16,15 +15,17 @@ export const deleteS3File = async ({
   key: string;
 }) => {
   const s3 = new AWS.S3();
-  const bucketName = process.env.S3_BUCKET_NAME;
 
   const params = { Bucket: bucket, Key: key };
 
   console.log(`Deleting file ${key} from S3.`);
 
-  await s3.deleteObject(params).promise();
-
-  console.log(`File ${key} deleted from S3.`);
-
-  return { success: true };
+  try {
+    await s3.deleteObject(params).promise();
+    console.log(`File ${key} deleted from S3.`);
+    return { success: true };
+  } catch (error) {
+    console.error('Error in deleteS3File:', error);
+    throw error;
+  }
 };
