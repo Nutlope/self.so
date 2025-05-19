@@ -1,6 +1,6 @@
-import AWS from 'aws-sdk';
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
-AWS.config.update({
+const s3Client = new S3Client({
   region: process.env.S3_UPLOAD_REGION!!,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!!,
@@ -15,14 +15,14 @@ export const deleteS3File = async ({
   bucket: string;
   key: string;
 }) => {
-  const s3 = new AWS.S3();
-  const bucketName = process.env.S3_BUCKET_NAME;
-
-  const params = { Bucket: bucket, Key: key };
+  const command = new DeleteObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
 
   console.log(`Deleting file ${key} from S3.`);
 
-  await s3.deleteObject(params).promise();
+  await s3Client.send(command);
 
   console.log(`File ${key} deleted from S3.`);
 
