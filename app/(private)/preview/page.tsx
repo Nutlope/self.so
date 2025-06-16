@@ -18,12 +18,12 @@ async function LLMProcessing({ userId }: { userId: string }) {
 
   let resume = await getResume(userId);
 
-  if (!resume?.fileContent || !resume.file) redirect('/upload');
+  if (!resume) redirect('/upload');
 
   let messageTip: string | undefined;
 
-  if (!resume.resumeData) {
-    let resumeObject = await generateResumeObject(resume?.fileContent);
+  if (!resume.resumeData && resume.fileContent) {
+    let resumeObject = await generateResumeObject(resume.fileContent);
 
     if (!resumeObject) {
       messageTip =
@@ -60,7 +60,7 @@ async function LLMProcessing({ userId }: { userId: string }) {
       .toString(36)
       .substring(2, 2 + saltLength);
 
-  if (!foundUsername) {
+  if (!foundUsername && resume.resumeData) {
     const username =
       (
         (resume.resumeData.header.name || 'user')
