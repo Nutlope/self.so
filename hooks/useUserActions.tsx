@@ -96,6 +96,28 @@ export function useUserActions() {
 
   // Update resume data in Upstash
   const uploadFileResume = async (file: File) => {
+    // Get current resume data
+    const currentResume = await fetchResume();
+    
+    // If there's an existing file, delete it from S3
+    if (currentResume.resume?.file?.bucket && currentResume.resume?.file?.key) {
+      try {
+        await fetch('/api/delete-s3', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bucket: currentResume.resume.file.bucket,
+            key: currentResume.resume.file.key,
+          }),
+        });
+      } catch (error) {
+        console.error('Error deleting previous file:', error);
+        // Continue with upload even if deletion fails
+      }
+    }
+
     const fileOnS3 = await uploadToS3(file);
 
     const newResume: Resume = {
