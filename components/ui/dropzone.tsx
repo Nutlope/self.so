@@ -63,17 +63,17 @@ export function Dropzone({
 
       {files.length > 0 ? (
         <div className="flex flex-col items-center gap-2">
-          <div className="bg-gray-100 p-3 rounded-md">{icon}</div>
+          <div className="bg-muted p-3 rounded-md">{icon}</div>
           <div className="text-lg font-medium mt-2">{files[0].name}</div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             {(files[0].size / 1024 / 1024).toFixed(2)} MB
           </p>
         </div>
       ) : (
         <>
-          <div className="bg-gray-100 p-3 rounded-md">{icon}</div>
+          <div className="bg-muted p-3 rounded-md">{icon}</div>
           <h2 className="text-lg font-medium mt-2">{title}</h2>
-          <p className="text-sm text-gray-500">{description}</p>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </>
       )}
     </div>
