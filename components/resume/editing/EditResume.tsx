@@ -36,14 +36,14 @@ export const EditResume = ({
 
   return (
     <section
-      className="mx-auto w-full max-w-2xl space-y-8 bg-white my-8"
+      className="mx-auto w-full max-w-2xl space-y-8 bg-background my-8"
       aria-label="Resume Content editing"
     >
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-bold">Header</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-2 col-span-2 md:col-span-1">
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="name" className="text-sm font-medium text-foreground">
               Name
             </Label>
             <Input
@@ -90,7 +90,7 @@ export const EditResume = ({
           <div className="flex flex-col gap-2 col-span-2">
             <Label
               htmlFor="shortAbout"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-foreground"
             >
               Short About
             </Label>
@@ -115,7 +115,7 @@ export const EditResume = ({
             <div className="flex flex-col gap-2">
               <Label
                 htmlFor="email"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-foreground"
               >
                 Email
               </Label>

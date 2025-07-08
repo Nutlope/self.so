@@ -18,21 +18,21 @@ export const PopupSiteLive = ({
 
   const mainContent = useMemo(() => {
     return (
-      <div className="relative bg-white rounded-lg shadow-lg">
+      <div className="relative bg-background rounded-lg shadow-lg border">
         <div className="p-6 flex flex-col items-center justify-center h-full gap-5">
           {/* Site live icon */}
           <img
             src="/site-live.svg"
             alt="Site Live Icon"
-            className="h-[41px] w-[52px]"
+            className="h-[41px] w-[52px] dark:invert"
           />
 
-          <h3 className="text-2xl font-medium text-design-black mb-1 font-sans">
+          <h3 className="text-2xl font-medium text-foreground mb-1 font-sans">
             Your website is now live!
           </h3>
 
           <div className="flex w-full flex-col gap-4 md:gap-2">
-            <div className="flex-grow bg-gray-100 rounded-md border border-gray-300 p-2 px-3 text-sm text-gray-700 min-h-10">
+            <div className="flex-grow bg-muted rounded-md border p-2 px-3 text-sm text-muted-foreground min-h-10">
               {websiteUrl}
             </div>
             <div className="grid grid-cols-2 gap-4 md:gap-2 ">
