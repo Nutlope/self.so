@@ -26,7 +26,7 @@ export const EducationField: React.FC<EducationFieldProps> = ({
   return (
     <div className="relative p-4 border rounded-md group">
       <button
-        className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors"
+        className="absolute top-2 right-2 text-muted-foreground hover:text-destructive transition-colors"
         onClick={() => onDelete(index)}
       >
         <svg

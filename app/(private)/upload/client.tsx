@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Dropzone } from '@/components/ui/dropzone';
-import { Linkedin, X } from 'lucide-react';
+import { FileText, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
@@ -74,10 +74,10 @@ export default function UploadPageClient() {
           {fileState.status !== 'empty' && (
             <button
               onClick={handleReset}
-              className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full z-10"
+              className="absolute top-2 right-2 p-1 hover:bg-muted rounded-full z-10"
               disabled={isUpdating}
             >
-              <X className="h-4 w-4 text-gray-500" />
+              <X className="h-4 w-4 text-muted-foreground" />
             </button>
           )}
 
@@ -86,20 +86,20 @@ export default function UploadPageClient() {
             maxFiles={1}
             icon={
               fileState.status !== 'empty' ? (
-                <img src="/uploaded-pdf.svg" className="h-6 w-6" />
+                <img src="/uploaded-pdf.svg" className="h-6 w-6 dark:invert" />
               ) : (
-                <Linkedin className="h-6 w-6 text-gray-600" />
+                <FileText className="h-6 w-6 text-muted-foreground" />
               )
             }
             title={
-              <span className="text-base font-bold text-center text-design-black">
+              <span className="text-base font-bold text-center text-foreground">
                 {fileState.status !== 'empty'
                   ? fileState.file.name
                   : 'Upload PDF'}
               </span>
             }
             description={
-              <span className="text-xs font-light text-center text-design-gray">
+              <span className="text-xs font-light text-center text-muted-foreground">
                 {fileState.status !== 'empty'
                   ? `${(fileState.file.size / 1024 / 1024).toFixed(2)} MB`
                   : 'Resume or LinkedIn'}
@@ -138,7 +138,7 @@ export default function UploadPageClient() {
       <div className="font-mono">
         <div className="relative">
           <Button
-            className="px-4 py-3 h-auto bg-design-black hover:bg-design-black/95"
+            className="px-4 py-3 h-auto bg-primary hover:bg-primary/90 text-primary-foreground"
             disabled={fileState.status === 'empty' || isUpdating}
             onClick={() => router.push('/pdf')}
           >
@@ -152,7 +152,7 @@ export default function UploadPageClient() {
                 <img
                   src="/sparkle.png"
                   alt="Sparkle Icon"
-                  className="h-5 w-5 mr-2"
+                  className="h-5 w-5 mr-2 dark:invert"
                 />
                 Generate Website
               </>

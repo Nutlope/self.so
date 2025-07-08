@@ -14,7 +14,7 @@ export const SkillField: React.FC<SkillFieldProps> = ({
   onDelete,
 }) => {
   return (
-    <div className="group relative bg-gray-100 px-3 py-1 rounded-full w-fit flex items-center gap-2">
+    <div className="group relative bg-muted px-3 py-1 rounded-full w-fit flex items-center gap-2">
       <div
         contentEditable
         suppressContentEditableWarning
@@ -29,7 +29,7 @@ export const SkillField: React.FC<SkillFieldProps> = ({
         {skill}
       </div>
       <button
-        className="text-gray-400 hover:text-red-500 transition-colors"
+        className="text-muted-foreground hover:text-destructive transition-colors"
         onClick={() => onDelete(index)}
       >
         <svg

@@ -113,8 +113,8 @@ export default function PreviewActionbar({
               onClick={handleStatusChange}
               className={`flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto ${
                 status === 'draft'
-                  ? 'bg-design-black hover:bg-[#333333] text-[#fcfcfc]'
-                  : 'bg-design-white text-design-black hover:bg-gray-100'
+                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
               }`}
             >
               {isChangingStatus ? (
