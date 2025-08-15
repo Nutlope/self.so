@@ -12,7 +12,7 @@ interface WorkExperience {
   link: string;
   contract: string;
   start: string;
-  end?: string | null;
+  end: string;
 }
 
 interface WorkExperienceFieldProps {
