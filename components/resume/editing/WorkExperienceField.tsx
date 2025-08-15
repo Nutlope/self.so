@@ -116,18 +116,18 @@ export const WorkExperienceField: React.FC<WorkExperienceFieldProps> = ({
         <div className="md:col-span-2">
           <Label className="text-sm font-medium">Date Range</Label>
           <DateRangePicker
-            startDate={work.start}
-            endDate={work.end}
+            startDate={normalizeDate(work.start)}
+            endDate={normalizeDate(work.end)}
             onStartDateChange={(date) => {
               onUpdate(index, {
                 ...work,
-                start: date,
+                start: normalizeDate(date),
               });
             }}
             onEndDateChange={(date) => {
               onUpdate(index, {
                 ...work,
-                end: date,
+                end: normalizeDate(date),
               });
             }}
           />
