@@ -5,5 +5,5 @@ export const getYear = (date: string) => {
 
 export const getShortMonth = (date: string) => {
   const dateObject = new Date(date);
-  return dateObject.toLocaleDateString('en-us', { month: 'short' });
+  return (dateObject.toLocaleDateString('en-us', { month: 'short' }) === 'Invalid Date') ? '' : dateObject.toLocaleDateString('en-us', { month: 'short' });
 };
