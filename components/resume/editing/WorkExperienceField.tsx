@@ -2,6 +2,7 @@ import React from 'react';
 import { Label } from '../../ui/label';
 import { Input } from '../../ui/input';
 import { DateRangePicker } from '../../ui/date-range-picker';
+import { normalizeDate } from './editingFormUtils';
 
 interface WorkExperience {
   title: string;
