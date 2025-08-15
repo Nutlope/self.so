@@ -1,6 +1,6 @@
 export const getYear = (date: string) => {
   const dateObject = new Date(date);
-  return dateObject.getFullYear();
+  return isNaN(dateObject.getFullYear()) ? 'Present' : dateObject.getFullYear();
 };
 
 export const getShortMonth = (date: string) => {
