@@ -2,6 +2,7 @@ import React from 'react';
 import { Label } from '../../ui/label';
 import { Input } from '../../ui/input';
 import { DateRangePicker } from '../../ui/date-range-picker';
+import { normalizeDate } from './editingFormUtils';
 
 interface Education {
   degree: string;
@@ -90,18 +91,18 @@ export const EducationField: React.FC<EducationFieldProps> = ({
         <div className="md:col-span-2">
           <Label className="text-sm font-medium">Date Range</Label>
           <DateRangePicker
-            startDate={edu.start}
-            endDate={edu.end}
+            startDate={normalizeDate(edu.start)}
+            endDate={normalizeDate(edu.end)}
             onStartDateChange={(date) => {
               onUpdate(index, {
                 ...edu,
-                start: date,
+                start: normalizeDate(date),
               });
             }}
             onEndDateChange={(date) => {
               onUpdate(index, {
                 ...edu,
-                end: date,
+                end: normalizeDate(date),
               });
             }}
           />
