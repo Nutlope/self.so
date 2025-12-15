@@ -67,7 +67,7 @@ export function WorkExperience({
                   {item.company && item.contract && <span>·</span>}
                   <span>{item.contract}</span>
                 </p>
-                <p className="self-stretch text-sm font-medium text-left text-[#6c737f]">
+                <p className="self-stretch text-sm font-medium text-left text-[#6c737f] whitespace-pre-line">
                   {item.description}
                 </p>
               </div>
