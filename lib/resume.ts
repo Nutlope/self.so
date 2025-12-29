@@ -40,8 +40,6 @@ const WorkExperienceSection = z.array(
     start: z.string().describe("Start date in format 'YYYY-MM-DD'"),
     end: z
       .string()
-      .optional()
-      .nullable()
       .describe("End date in format 'YYYY-MM-DD'"),
     description: z.string().describe('Job description'),
   })
