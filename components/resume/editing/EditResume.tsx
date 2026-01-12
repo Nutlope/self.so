@@ -302,6 +302,7 @@ export const EditResume = ({
                       link: '',
                       contract: '',
                       start: '',
+                      end: null,
                     },
                   ],
                 });

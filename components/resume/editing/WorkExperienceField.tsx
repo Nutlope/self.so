@@ -2,16 +2,17 @@ import React from 'react';
 import { Label } from '../../ui/label';
 import { Input } from '../../ui/input';
 import { DateRangePicker } from '../../ui/date-range-picker';
+import { normalizeDate } from './editingFormUtils';
 
 interface WorkExperience {
   title: string;
   company: string;
   description: string;
   location: string;
-  link: string;
+  link?: string;
   contract: string;
   start: string;
-  end?: string | null;
+  end: string | null;
 }
 
 interface WorkExperienceFieldProps {
@@ -115,18 +116,18 @@ export const WorkExperienceField: React.FC<WorkExperienceFieldProps> = ({
         <div className="md:col-span-2">
           <Label className="text-sm font-medium">Date Range</Label>
           <DateRangePicker
-            startDate={work.start}
-            endDate={work.end}
+            startDate={normalizeDate(work.start)}
+            endDate={normalizeDate(work.end)}
             onStartDateChange={(date) => {
               onUpdate(index, {
                 ...work,
-                start: date,
+                start: normalizeDate(date),
               });
             }}
             onEndDateChange={(date) => {
               onUpdate(index, {
                 ...work,
-                end: date,
+                end: date === null ? null : normalizeDate(date),
               });
             }}
           />

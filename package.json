@@ -44,6 +44,7 @@
     "@radix-ui/react-tooltip": "^1.1.6",
     "@tanstack/react-query": "^5.69.0",
     "@upstash/redis": "^1.34.9",
+    "@vercel/og": "^0.8.6",
     "ai": "^6.0.28",
     "autoprefixer": "^10.4.20",
     "aws-sdk": "^2.1692.0",

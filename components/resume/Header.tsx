@@ -46,7 +46,7 @@ export function Header({
   header: ResumeDataSchemaType['header'];
   picture?: string;
 }) {
-  const prefixUrl = (stringToFix?: string) => {
+  const prefixUrl = (stringToFix?: string | null) => {
     if (!stringToFix) return undefined;
     const url = stringToFix.trim();
     return url.startsWith('http') ? url : `https://${url}`;
@@ -54,7 +54,7 @@ export function Header({
 
   const socialLinks = useMemo(() => {
     const formatSocialUrl = (
-      url: string | undefined,
+      url: string | null | undefined,
       platform: 'github' | 'twitter' | 'linkedin'
     ) => {
       if (!url) return undefined;

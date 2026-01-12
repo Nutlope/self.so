@@ -8,7 +8,7 @@ import { z } from 'zod';
 export type GetResumeResponse = { resume?: Resume } | { error: string };
 export type PostResumeResponse =
   | { success: true }
-  | { error: string; details?: z.ZodError['errors'] };
+  | { error: string; details?: z.ZodError['issues'] };
 
 // GET endpoint to retrieve resume
 export async function GET(): Promise<NextResponse<GetResumeResponse>> {
@@ -46,7 +46,7 @@ export async function POST(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid data format', details: error.errors },
+        { error: 'Invalid data format', details: error.issues },
         { status: 400 },
       );
     }
