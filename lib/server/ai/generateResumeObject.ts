@@ -13,8 +13,6 @@ const togetherai = createTogetherAI({
 });
 
 export const generateResumeObject = async (resumeText: string) => {
-  console.log("resumeText: ", resumeText);
-
   const startTime = Date.now();
   try {
     const { output } = await generateText({
