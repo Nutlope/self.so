@@ -1,7 +1,5 @@
 import { TOGETHER_LINK } from '@/lib/utils';
 
-import { TOGETHER_LINK } from '@/lib/utils';
-
 export function Footer() {
   return (
     <footer className="w-full py-4 px-6  mt-auto border-t border-gray-200">
