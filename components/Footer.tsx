@@ -1,3 +1,7 @@
+import { TOGETHER_LINK } from '@/lib/utils';
+
+import { TOGETHER_LINK } from '@/lib/utils';
+
 export function Footer() {
   return (
     <footer className="w-full py-4 px-6  mt-auto border-t border-gray-200">
@@ -6,7 +10,7 @@ export function Footer() {
           Powered by{' '}
           <a
             target="_blank"
-            href="https://togetherai.link"
+            href={TOGETHER_LINK}
             className="text-design-black underline underline-offset-2"
           >
             Together.ai
@@ -14,10 +18,10 @@ export function Footer() {
           &{' '}
           <a
             target="_blank"
-            href="https://togetherai.link"
+            href={TOGETHER_LINK}
             className="text-design-black underline underline-offset-2"
           >
-            Llama 3.3
+            Qwen Next
           </a>
         </div>
 
