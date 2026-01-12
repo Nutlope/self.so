@@ -21,13 +21,53 @@ export const generateResumeObject = async (resumeText: string) => {
       output: Output.object({
         schema: zodSchema(ResumeDataSchema),
       }),
-      prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text. Be professional and concise.
+      prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:
+
+    {
+      "header": {
+        "name": "Full Name",
+        "shortAbout": "Brief professional summary",
+        "location": "City, Country (optional)",
+        "contacts": {
+          "website": "website URL (optional)",
+          "email": "email address (optional)",
+          "phone": "phone number (optional)",
+          "twitter": "twitter username (optional)",
+          "linkedin": "linkedin username (optional)",
+          "github": "github username (optional)"
+        },
+        "skills": ["skill1", "skill2", "skill3"]
+      },
+      "summary": "Detailed professional summary paragraph",
+      "workExperience": [
+        {
+          "company": "Company Name",
+          "link": "Company website URL",
+          "location": "City, Country or Remote",
+          "contract": "Full-time/Part-time/Contract",
+          "title": "Job Title",
+          "start": "YYYY-MM-DD",
+          "end": "YYYY-MM-DD or null if current",
+          "description": "Job description"
+        }
+      ],
+      "education": [
+        {
+          "school": "School/University Name",
+          "degree": "Degree obtained",
+          "start": "Start year",
+          "end": "End year"
+        }
+      ]
+    }
+
     ## Instructions:
 
-    - If the resume text does not include an 'about' section or specfic skills mentioned, please generate appropriate content for these sections based on the context of the resume and based on the job role.
-    - For the about section: Create a professional summary that highlights the candidate's experience, expertise, and career objectives.
-    - For the skills: Generate a maximum of 10 skills taken from the ones mentioned in the resume text or based on the job role / job title infer some if not present.
-    - If the resume doesn't contain the full link to social media website leave the username/link as empty strings to the specific social meda websites. The username never contains any space so make sure to only return the full username for the website otherwise don't return it.
+    - Extract information from the resume text and map it to this exact JSON structure
+    - If information is missing, use reasonable defaults or leave optional fields empty
+    - For skills: Extract up to 10 relevant skills from the resume
+    - For contacts: Only include social media usernames if explicitly mentioned in the resume
+    - Ensure all required fields are present with appropriate data types
 
     ## Resume text:
 
