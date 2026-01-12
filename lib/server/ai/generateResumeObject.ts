@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateText, Output, zodSchema } from 'ai';
 import { createTogetherAI } from '@ai-sdk/togetherai';
 import { ResumeDataSchema } from '@/lib/resume';
 import dedent from 'dedent';
@@ -15,13 +15,13 @@ const togetherai = createTogetherAI({
 export const generateResumeObject = async (resumeText: string) => {
   const startTime = Date.now();
   try {
-    const { object } = await generateObject({
+    const { output } = await generateText({
       model: togetherai('Qwen/Qwen2.5-72B-Instruct-Turbo'),
       maxRetries: 1,
-      schema: ResumeDataSchema,
-      mode: 'json',
-      prompt:
-        dedent(`You are an expert resume writer. Generate a resume object from the following resume text. Be professional and concise.
+      output: Output.object({
+        schema: zodSchema(ResumeDataSchema),
+      }),
+      prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text. Be professional and concise.
     ## Instructions:
 
     - If the resume text does not include an 'about' section or specfic skills mentioned, please generate appropriate content for these sections based on the context of the resume and based on the job role.
@@ -40,7 +40,7 @@ export const generateResumeObject = async (resumeText: string) => {
       `Generating resume object took ${(endTime - startTime) / 1000} seconds`
     );
 
-    return object;
+    return output;
   } catch (error) {
     console.warn('Impossible generating resume object', error);
     return undefined;
