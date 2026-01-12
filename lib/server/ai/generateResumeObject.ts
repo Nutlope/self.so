@@ -13,10 +13,12 @@ const togetherai = createTogetherAI({
 });
 
 export const generateResumeObject = async (resumeText: string) => {
+  console.log("resumeText: ", resumeText);
+
   const startTime = Date.now();
   try {
     const { output } = await generateText({
-      model: togetherai('Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8'),
+      model: togetherai('Qwen/Qwen3-Next-80B-A3B-Instruct'),
       maxRetries: 2,
       output: Output.object({
         schema: zodSchema(ResumeDataSchema),
@@ -55,8 +57,8 @@ export const generateResumeObject = async (resumeText: string) => {
         {
           "school": "School/University Name",
           "degree": "Degree obtained",
-          "start": "Start year",
-          "end": "End year"
+          "start": "Start year as string (e.g., '2014')",
+          "end": "End year as string (e.g., '2018')"
         }
       ]
     }
@@ -67,6 +69,7 @@ export const generateResumeObject = async (resumeText: string) => {
     - If information is missing, use reasonable defaults or leave optional fields empty
     - For skills: Extract up to 10 relevant skills from the resume
     - For contacts: Only include social media usernames if explicitly mentioned in the resume
+    - IMPORTANT: All date fields (start, end) must be strings, not numbers
     - Ensure all required fields are present with appropriate data types
 
     ## Resume text:
