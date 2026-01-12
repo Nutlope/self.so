@@ -16,8 +16,8 @@ export const generateResumeObject = async (resumeText: string) => {
   const startTime = Date.now();
   try {
     const { output } = await generateText({
-      model: togetherai('Qwen/Qwen2.5-72B-Instruct-Turbo'),
-      maxRetries: 1,
+      model: togetherai('Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8'),
+      maxRetries: 2,
       output: Output.object({
         schema: zodSchema(ResumeDataSchema),
       }),
