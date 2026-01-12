@@ -9,10 +9,10 @@ interface WorkExperience {
   company: string;
   description: string;
   location: string;
-  link: string;
+  link?: string;
   contract: string;
   start: string;
-  end: string;
+  end: string | null;
 }
 
 interface WorkExperienceFieldProps {
@@ -127,7 +127,7 @@ export const WorkExperienceField: React.FC<WorkExperienceFieldProps> = ({
             onEndDateChange={(date) => {
               onUpdate(index, {
                 ...work,
-                end: normalizeDate(date),
+                end: date === null ? null : normalizeDate(date),
               });
             }}
           />

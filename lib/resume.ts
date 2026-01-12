@@ -27,7 +27,7 @@ const SummarySection = z.string().describe('Summary of your profile');
 const WorkExperienceSection = z.array(
   z.object({
     company: z.string().describe('Company name'),
-    link: z.string().nullable().describe('Company website URL'),
+     link: z.string().optional().describe('Company website URL'),
     location: z
       .string()
       .describe(
@@ -38,9 +38,10 @@ const WorkExperienceSection = z.array(
       .describe('Type of work contract like Full-time, Part-time, Contract'),
     title: z.string().describe('Job title'),
     start: z.string().describe("Start date in format 'YYYY-MM-DD'"),
-    end: z
-      .string()
-      .describe("End date in format 'YYYY-MM-DD'"),
+     end: z
+       .string()
+       .nullable()
+       .describe("End date in format 'YYYY-MM-DD' or null if current"),
     description: z.string().describe('Job description'),
   })
 );
