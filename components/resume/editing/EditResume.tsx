@@ -20,14 +20,14 @@ export const EditResume = ({
   const [isAddSkillDialogOpen, setIsAddSkillDialogOpen] = useState(false);
 
   const handleAddSkill = (skillToAdd: string) => {
-    if (resume.header.skills.includes(skillToAdd)) {
+    if ((resume.header.skills ?? []).includes(skillToAdd)) {
       toast.warning('This skill is already added.');
     } else {
       onChangeResume({
         ...resume,
         header: {
           ...resume.header,
-          skills: [...resume.header.skills, skillToAdd],
+          skills: [...(resume.header.skills ?? []), skillToAdd],
         },
       });
       toast.success('Skill added successfully.');
@@ -357,13 +357,13 @@ export const EditResume = ({
         <div className="space-y-4">
           <h2 className="text-xl font-bold">Skills</h2>
           <div className="flex flex-wrap gap-2">
-            {resume.header.skills.map((skill, index) => (
+            {(resume.header.skills ?? []).map((skill, index) => (
               <SkillField
                 key={index}
                 skill={skill}
                 index={index}
                 onUpdate={(index, updatedSkill) => {
-                  const newSkills = [...resume.header.skills];
+                  const newSkills = [...(resume.header.skills ?? [])];
                   newSkills[index] = updatedSkill;
                   onChangeResume({
                     ...resume,
@@ -374,7 +374,7 @@ export const EditResume = ({
                   });
                 }}
                 onDelete={(index) => {
-                  const newSkills = [...resume.header.skills];
+                  const newSkills = [...(resume.header.skills ?? [])];
                   newSkills.splice(index, 1);
                   onChangeResume({
                     ...resume,
