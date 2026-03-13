@@ -8,7 +8,7 @@ export const CustomSpinner = ({ className }: { className?: string }) => {
       viewBox="0 0 28 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('animate-spin', className)}
+      className={cn('animate-spin dark:invert', className)}
     >
       <g clipPath="url(#clip0_199_1000)">
         <path

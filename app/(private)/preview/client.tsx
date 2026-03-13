@@ -252,7 +252,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
         )}
       </div>
 
-      <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-neutral-300 flex items-center justify-between px-4">
+      <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-border flex items-center justify-between px-4">
         {isEditMode ? (
           <EditResume
             resume={localResumeData}

@@ -34,13 +34,13 @@ export default function PreviewActionbar({
 
   return (
     <>
-      <div className="w-full rounded-lg bg-[#fcfcfc] border-[0.5px] border-neutral-300 flex items-center justify-between py-3 px-5  sm:px-4 sm:py-2.5  flex-col sm:flex-row gap-4">
+      <div className="w-full rounded-lg bg-card border-[0.5px] border-border flex items-center justify-between py-3 px-5  sm:px-4 sm:py-2.5  flex-col sm:flex-row gap-4">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
           <div className="flex items-center gap-1 mr-1">
             <img
               src="/link-icon.png"
               className={cn(
-                'w-4 h-4 text-design-black ',
+                'w-4 h-4 dark:invert',
                 status === 'live' && 'cursor-pointer'
               )}
               onClick={() => {
@@ -50,11 +50,11 @@ export default function PreviewActionbar({
                 toast.success('Copied link to your website');
               }}
             />
-            <p className="text-sm text-design-black">{prefix}</p>
+            <p className="text-sm text-foreground">{prefix}</p>
           </div>
 
-          <div className="overflow-hidden rounded bg-white border-[0.5px] border-neutral-300 flex flex-row md:w-80 w-full">
-            <span className="flex-1 p-3 text-sm text-[#5d5d5d] border-none outline-none focus:ring-0 bg-transparent w-fit truncate">
+          <div className="overflow-hidden rounded bg-background border-[0.5px] border-border flex flex-row md:w-80 w-full">
+            <span className="flex-1 p-3 text-sm text-muted-foreground border-none outline-none focus:ring-0 bg-transparent w-fit truncate">
               {initialUsername}
             </span>
 
@@ -113,13 +113,13 @@ export default function PreviewActionbar({
               onClick={handleStatusChange}
               className={`flex items-center min-w-[100px] min-h-8 gap-1.5 px-3 py-1.5 h-auto ${
                 status === 'draft'
-                  ? 'bg-design-black hover:bg-[#333333] text-[#fcfcfc]'
-                  : 'bg-design-white text-design-black hover:bg-gray-100'
+                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                  : 'bg-background text-foreground hover:bg-muted border border-border'
               }`}
             >
               {isChangingStatus ? (
                 <>
-                  <span className="mr-2 h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                  <span className="mr-2 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
                 </>
               ) : (
                 <span className="text-sm">
