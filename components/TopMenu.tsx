@@ -8,7 +8,7 @@ export function TopMenu() {
     <>
       <header className="w-full py-4 md:px-0 px-6 flex justify-between items-center max-w-4xl mx-auto h-[67px]">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.svg" alt="Self.so Logo" className="h-[30px] w-auto" />
+          <img src="/logo.svg" alt="Self.so Logo" className="h-[30px] w-auto dark:invert" />
         </Link>
 
         <div className="flex items-center gap-3">
@@ -26,12 +26,12 @@ export function TopMenu() {
               >
                 <Button
                   variant="outline"
-                  className=" flex flex-row gap-1.5 py-2 px-4 border-gray-300 text-design-gray text-sm font-medium"
+                  className="flex flex-row gap-1.5 py-2 px-4 border text-muted-foreground text-sm font-medium"
                 >
                   <img
                     src="/github.svg"
                     alt="Github Logo"
-                    className="size-[14px]"
+                    className="size-[14px] dark:invert"
                   />
                   <span>Github</span>
                 </Button>
@@ -39,7 +39,7 @@ export function TopMenu() {
               <Link href="/upload">
                 <Button
                   variant="default"
-                  className="text-sm font-medium py-2 px-4 bg-design-black hover:bg-design-black/95"
+                  className="text-sm font-medium py-2 px-4 bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   Sign up
                 </Button>
