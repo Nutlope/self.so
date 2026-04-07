@@ -1,4 +1,4 @@
-import { getResume, Resume, storeResume } from '@/lib/server/redisActions';
+import { deleteResume, getResume, Resume, storeResume } from '@/lib/server/redisActions';
 import { currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
@@ -51,6 +51,32 @@ export async function POST(
       );
     }
     console.error('Error storing resume:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(): Promise<NextResponse<{ success: boolean } | { error: string }>> {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const success = await deleteResume(user.id);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Failed to delete resume' },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting resume:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

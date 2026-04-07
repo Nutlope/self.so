@@ -198,6 +198,23 @@ export function useUserActions() {
     },
   });
 
+  const deleteResumeMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/resume', {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete resume');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['resume'] });
+    },
+  });
+
   return {
     resumeQuery,
     uploadResumeMutation,
@@ -206,5 +223,6 @@ export function useUserActions() {
     updateUsernameMutation,
     checkUsernameMutation,
     saveResumeDataMutation,
+    deleteResumeMutation,
   };
 }
