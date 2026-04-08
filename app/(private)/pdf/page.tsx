@@ -18,10 +18,11 @@ async function PdfProcessing({ userId }: { userId: string }) {
     const isContentBad = false; // await isFileContentBad(fileContent);
 
     if (isContentBad) {
-      await deleteS3File({
-        bucket: resume.file.bucket,
-        key: resume.file.key,
-      });
+      // Skip S3 deletion for now due to IAM permissions issue
+      // await deleteS3File({
+      //   bucket: resume.file.bucket,
+      //   key: resume.file.key,
+      // });
 
       await storeResume(userId, {
         ...resume,
