@@ -107,6 +107,21 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
     setHasUnsavedChanges(true);
   };
 
+  if (resumeQuery.isError || usernameQuery.isError) {
+    const errorMessage =
+      resumeQuery.error instanceof Error
+        ? resumeQuery.error.message
+        : usernameQuery.error instanceof Error
+          ? usernameQuery.error.message
+          : 'Something went wrong. Please refresh the page.';
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <p className="text-red-500 text-lg">{errorMessage}</p>
+        <Button onClick={() => window.location.reload()}>Refresh Page</Button>
+      </div>
+    );
+  }
+
   if (
     resumeQuery.isLoading ||
     usernameQuery.isLoading ||
@@ -268,7 +283,7 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
         )}
       </div>
 
-      <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-neutral-300 flex items-center justify-between px-4">
+      <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-border flex items-center justify-between px-4">
         {isEditMode ? (
           <EditResume
             resume={localResumeData}

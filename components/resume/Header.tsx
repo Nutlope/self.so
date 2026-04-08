@@ -178,7 +178,13 @@ export function Header({
                 className="underline hover:text-foreground/70"
                 href={socialLinks.website}
               >
-                {new URL(socialLinks.website).hostname}
+                {(() => {
+                  try {
+                    return new URL(socialLinks.website).hostname;
+                  } catch {
+                    return socialLinks.website;
+                  }
+                })()}
               </a>
               <span aria-hidden="true">/</span>
             </>

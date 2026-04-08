@@ -7,7 +7,7 @@
   An open source personal site builder. Powered by Together.ai.
 </p>
 
-## Tech stack
+## Tech stack!!!!
 
 - Together.ai for the LLM
 - Vercel's AI SDK as the LLM framework
