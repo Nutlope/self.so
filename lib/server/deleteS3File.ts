@@ -3,8 +3,8 @@ import AWS from 'aws-sdk';
 AWS.config.update({
   region: process.env.S3_UPLOAD_REGION!!,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!!,
+    accessKeyId: process.env.S3_UPLOAD_KEY!!,
+    secretAccessKey: process.env.S3_UPLOAD_SECRET!!,
   },
 });
 
@@ -16,7 +16,7 @@ export const deleteS3File = async ({
   key: string;
 }) => {
   const s3 = new AWS.S3();
-  const bucketName = process.env.S3_BUCKET_NAME;
+  const bucketName = process.env.S3_UPLOAD_BUCKET;
 
   const params = { Bucket: bucket, Key: key };
 
