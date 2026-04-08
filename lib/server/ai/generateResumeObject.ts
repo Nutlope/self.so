@@ -16,8 +16,9 @@ export const generateResumeObject = async (resumeText: string) => {
   const startTime = Date.now();
   try {
     const { object } = await generateObject({
-      model: togetherai('Qwen/Qwen3-Next-80B-A3B-Instruct'),
+      model: togetherai('deepseek-ai/DeepSeek-V3'),
       maxRetries: 2,
+      maxTokens: 4096,
        schema: ResumeDataSchema,
       prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:
 
