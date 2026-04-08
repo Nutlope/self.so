@@ -11,7 +11,7 @@ import { useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Eye, Edit, Save, X } from 'lucide-react';
+import { Eye, Edit, Save, X, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,20 +24,24 @@ import {
 } from '@/components/ui/alert-dialog';
 
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function PreviewClient({ messageTip }: { messageTip?: string }) {
   const { user } = useUser();
+  const router = useRouter();
   const {
     resumeQuery,
     toggleStatusMutation,
     usernameQuery,
     saveResumeDataMutation,
+    deleteResumeMutation,
   } = useUserActions();
   const [showModalSiteLive, setModalSiteLive] = useState(false);
   const [localResumeData, setLocalResumeData] = useState<ResumeData>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showDiscardConfirmation, setShowDiscardConfirmation] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
     if (resumeQuery.data?.resume?.resumeData) {
@@ -81,6 +85,21 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
     setIsEditMode(false);
     setShowDiscardConfirmation(false);
     toast.info('Changes discarded');
+  };
+
+  const handleDeleteResume = async () => {
+    try {
+      await deleteResumeMutation.mutateAsync();
+      toast.success('Resume deleted successfully');
+      setShowDeleteConfirmation(false);
+      router.push('/upload');
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Failed to delete resume: ${error.message}`);
+      } else {
+        toast.error('Failed to delete resume');
+      }
+    }
   };
 
   const handleResumeChange = (newResume: ResumeData) => {
@@ -235,6 +254,18 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
             </Button>
           </div>
         )}
+
+        {!isEditMode && (
+          <Button
+            variant="outline"
+            onClick={() => setShowDeleteConfirmation(true)}
+            className="flex items-center gap-1 text-red-500 hover:text-red-600 hover:bg-red-50"
+            disabled={deleteResumeMutation.isPending}
+          >
+            <Trash2 className="h-4 w-4" />
+            <span>Delete</span>
+          </Button>
+        )}
       </div>
 
       <div className="max-w-3xl mx-auto w-full md:rounded-lg border-[0.5px] border-neutral-300 flex items-center justify-between px-4">
@@ -267,6 +298,30 @@ export default function PreviewClient({ messageTip }: { messageTip?: string }) {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDiscardChanges}>
               Discard
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={showDeleteConfirmation}
+        onOpenChange={setShowDeleteConfirmation}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Resume?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete your resume? This action cannot
+              be undone and your public profile will no longer be accessible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteResume}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

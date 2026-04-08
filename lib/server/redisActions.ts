@@ -2,6 +2,7 @@ import { upstashRedis } from '@/lib/server/redis';
 import { ResumeDataSchema } from '@/lib/resume';
 import { z } from 'zod';
 import { PRIVATE_ROUTES } from '../routes';
+import { deleteS3File } from './deleteS3File';
 
 // Key prefixes for different types of data
 const REDIS_KEYS = {
@@ -47,6 +48,25 @@ export async function getResume(userId: string): Promise<Resume | undefined> {
 }
 
 // Function to store resume data for a user
+export async function deleteResume(userId: string): Promise<boolean> {
+  try {
+    const resume = await getResume(userId);
+    
+    if (resume?.file?.bucket && resume?.file?.key) {
+      await deleteS3File({
+        bucket: resume.file.bucket,
+        key: resume.file.key,
+      });
+    }
+    
+    await upstashRedis.del(`${REDIS_KEYS.RESUME_PREFIX}${userId}`);
+    return true;
+  } catch (error) {
+    console.error('Error deleting resume:', error);
+    return false;
+  }
+}
+
 export async function storeResume(
   userId: string,
   resumeData: Resume,
