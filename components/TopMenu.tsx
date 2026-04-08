@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { Show, UserButton } from '@clerk/nextjs';
 
 export function TopMenu() {
   return (
@@ -11,11 +11,11 @@ export function TopMenu() {
         </Link>
 
         <div>
-          <SignedIn>
+          <Show when="signed-in">
             {/* User is signed in */}
             <UserButton />
-          </SignedIn>
-          <SignedOut>
+          </Show>
+          <Show when="signed-out">
             <div className="flex flex-row gap-3 font-mono ">
               <a
                 href="https://github.com/nutlope/self.so"
@@ -43,7 +43,7 @@ export function TopMenu() {
                 </Button>
               </Link>
             </div>
-          </SignedOut>
+          </Show>
         </div>
       </header>
     </>
