@@ -14,12 +14,14 @@ const togetherai = createTogetherAI({
 
 export const generateResumeObject = async (resumeText: string) => {
   const startTime = Date.now();
+  console.log('[generateResumeObject] Starting AI generation...');
   try {
+    console.log('[generateResumeObject] Calling TogetherAI...');
     const { object } = await generateObject({
       model: togetherai('deepseek-ai/DeepSeek-V3'),
       maxRetries: 2,
       maxTokens: 4096,
-       schema: ResumeDataSchema,
+      schema: ResumeDataSchema,
       prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:
 
     {
@@ -90,15 +92,16 @@ export const generateResumeObject = async (resumeText: string) => {
     ${resumeText}
     `),
     });
+    console.log('[generateResumeObject] AI generation completed');
 
     const endTime = Date.now();
     console.log(
-      `Generating resume object took ${(endTime - startTime) / 1000} seconds`
+      `[generateResumeObject] Total time: ${(endTime - startTime) / 1000} seconds`
     );
 
     return object;
   } catch (error) {
-    console.warn('Impossible generating resume object', error);
+    console.warn('[generateResumeObject] Error:', error);
     return undefined;
   }
 };
