@@ -2,6 +2,8 @@ import { getResume, getUserIdByUsername } from '@/lib/server/redisActions';
 import { unstable_cache } from 'next/cache';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
+
 export async function getUserData(username: string) {
   const user_id = await getUserIdByUsername(username);
   if (!user_id)
@@ -11,8 +13,6 @@ export async function getUserData(username: string) {
   if (!resume?.resumeData || resume.status !== 'live') {
     return { user_id, resume: undefined, clerkUser: undefined };
   }
-
-  const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
   const getCachedUser = unstable_cache(
     async () => {

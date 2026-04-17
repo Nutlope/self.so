@@ -2,7 +2,7 @@ import { getResume } from '@/lib/server/redisActions';
 import { unstable_cache } from 'next/cache';
 import { createClerkClient } from '@clerk/clerk-sdk-node';
 
-const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
 
 export const getCachedUser = async (userId: string) => {
   return unstable_cache(

@@ -14,16 +14,25 @@ import { MAX_USERNAME_LENGTH } from '@/lib/config';
 import { currentUser } from '@clerk/nextjs/server';
 
 async function LLMProcessing({ userId }: { userId: string }) {
+  console.log('[Preview] Starting LLMProcessing for userId:', userId);
+
   const user = await currentUser();
+  console.log('[Preview] Got currentUser:', user?.id);
 
   let resume = await getResume(userId);
+  console.log('[Preview] Got resume:', resume ? 'exists' : 'none');
 
-  if (!resume?.fileContent || !resume.file) redirect('/upload');
+  if (!resume?.fileContent || !resume.file) {
+    console.log('[Preview] No fileContent or file, redirecting to upload');
+    redirect('/upload');
+  }
 
   let messageTip: string | undefined;
 
   if (!resume.resumeData) {
+    console.log('[Preview] No resumeData, calling generateResumeObject...');
     let resumeObject = await generateResumeObject(resume?.fileContent);
+    console.log('[Preview] generateResumeObject completed:', resumeObject ? 'success' : 'failed');
 
     if (!resumeObject) {
       messageTip =
@@ -43,15 +52,18 @@ async function LLMProcessing({ userId }: { userId: string }) {
       };
     }
 
+    console.log('[Preview] Storing resume with resumeData...');
     await storeResume(userId, {
       ...resume,
       resumeData: resumeObject,
     });
     resume.resumeData = resumeObject;
+    console.log('[Preview] Resume stored successfully');
   }
 
   // we set the username only if it wasn't already set for this user meaning it's new user
   const foundUsername = await getUsernameById(userId);
+  console.log('[Preview] Found username:', foundUsername);
 
   const saltLength = 6;
 
@@ -69,6 +81,7 @@ async function LLMProcessing({ userId }: { userId: string }) {
           .replace(/\s+/g, '-') + '-'
       ).slice(0, MAX_USERNAME_LENGTH - saltLength) + createSalt();
 
+    console.log('[Preview] Creating username:', username);
     const creation = await createUsernameLookup({
       userId,
       username,
@@ -77,13 +90,19 @@ async function LLMProcessing({ userId }: { userId: string }) {
     if (!creation) redirect('/upload?error=usernameCreationFailed');
   }
 
+  console.log('[Preview] Rendering PreviewClient');
   return <PreviewClient messageTip={messageTip} />;
 }
 
 export default async function Preview() {
+  console.log('[Preview] Page started');
   const { userId, redirectToSignIn } = await auth();
+  console.log('[Preview] Auth completed, userId:', userId);
 
-  if (!userId) return redirectToSignIn();
+  if (!userId) {
+    console.log('[Preview] No userId, redirecting to sign in');
+    return redirectToSignIn();
+  }
 
   return (
     <>
