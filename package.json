@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@ai-sdk/togetherai": "^2.0.45",
-    "@clerk/nextjs": "^7.0.11",
+    "@clerk/clerk-sdk-node": "^5.1.6",
+    "@clerk/nextjs": "^7.2.2",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -58,7 +59,7 @@
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "motion": "^12.6.2",
-    "next": "16.2.2",
+    "next": "16.2.4",
     "next-plausible": "^3.12.5",
     "next-s3-upload": "^0.3.4",
     "next-themes": "^0.4.4",

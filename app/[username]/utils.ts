@@ -1,6 +1,6 @@
 import { getResume, getUserIdByUsername } from '@/lib/server/redisActions';
-import { clerkClient } from '@clerk/nextjs/server';
 import { unstable_cache } from 'next/cache';
+import { createClerkClient } from '@clerk/clerk-sdk-node';
 
 export async function getUserData(username: string) {
   const user_id = await getUserIdByUsername(username);
@@ -12,14 +12,16 @@ export async function getUserData(username: string) {
     return { user_id, resume: undefined, clerkUser: undefined };
   }
 
+  const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+
   const getCachedUser = unstable_cache(
     async () => {
-      return await (await clerkClient()).users.getUser(user_id);
+      return await clerkClient.users.getUser(user_id);
     },
     [user_id],
     {
       tags: ['users'],
-      revalidate: 60, // 1 minute in seconds
+      revalidate: 60,
     }
   );
   const clerkUser = await getCachedUser();
