@@ -1,7 +1,10 @@
-import { generateObject } from 'ai';
+import { generateText, Output } from 'ai';
 import { createTogetherAI } from '@ai-sdk/togetherai';
 import { ResumeDataSchema } from '@/lib/resume';
 import dedent from 'dedent';
+
+// Silence "responseFormat" warning spam in Together AI benchmark runs
+(globalThis as any).AI_SDK_LOG_WARNINGS = false;
 
 const togetherai = createTogetherAI({
   apiKey: process.env.TOGETHER_API_KEY ?? '',
@@ -14,15 +17,17 @@ const togetherai = createTogetherAI({
 
 export const generateResumeObject = async (
   resumeText: string,
-  model: string = 'deepseek-ai/DeepSeek-V3'
+  model: string = 'Qwen/Qwen3-Coder-Next-FP8'
 ) => {
   const startTime = Date.now();
   try {
-    const { object } = await generateObject({
+    const { output } = await generateText({
       model: togetherai(model),
       maxRetries: 2,
       maxOutputTokens: 4096,
-      schema: ResumeDataSchema,
+      output: Output.object({
+        schema: ResumeDataSchema,
+      }),
       prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:
 
     {
@@ -100,9 +105,13 @@ export const generateResumeObject = async (
       `[generateResumeObject] Total time: ${(endTime - startTime) / 1000} seconds`
     );
 
-    return object;
+    return output;
   } catch (error) {
-    console.warn('[generateResumeObject] Error:', error);
+    const msg =
+      error instanceof Error
+        ? `${error.constructor.name}: ${error.message.slice(0, 120)}`
+        : String(error).slice(0, 120);
+    console.warn(`[generateResumeObject] ${msg}`);
     return undefined;
   }
 };

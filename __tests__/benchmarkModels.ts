@@ -8,26 +8,23 @@ export interface ModelPricing {
   outputCost: number;
 }
 
+// Together AI serverless chat models (verified IDs from /v1/models API)
+// Sorted by input price ascending. Includes all models the user requested.
 export const MODEL_PRICING: Record<string, ModelPricing> = {
-  'LFM2-24B-A2B': { inputCost: 0.03, outputCost: 0.12 },
-  'OpenAI-GPT-O3-Mini': { inputCost: 0.05, outputCost: 0.20 },
-  'google/gemma-3n-e4b-instruct': { inputCost: 0.06, outputCost: 0.12 },
-  'Qwen/Qwen3.5-9B-FP8': { inputCost: 0.10, outputCost: 0.15 },
-  'EssentialAI/EssentialAI-Rnj-1-Instruct': { inputCost: 0.15, outputCost: 0.15 },
-  'OpenAI/GPT-O3-120B': { inputCost: 0.15, outputCost: 0.60 },
-  'google/gemma-4-31b-it-FP8': { inputCost: 0.20, outputCost: 0.50 },
-  'Qwen/Qwen3-235B-A22B-Instruct-2507-FP8': { inputCost: 0.20, outputCost: 0.60 },
-  'MiniMaxAI/MiniMax-M2.7-FP4': { inputCost: 0.30, outputCost: 1.20 },
-  'MiniMaxAI/MiniMax-M2.5-FP4': { inputCost: 0.30, outputCost: 1.20 },
+  // Lower-cost, smaller models
+  'MiniMaxAI/MiniMax-M2.5': { inputCost: 0.30, outputCost: 1.20 },
+  'MiniMaxAI/MiniMax-M2.7': { inputCost: 0.30, outputCost: 1.20 },
   'Qwen/Qwen3-Coder-Next-FP8': { inputCost: 0.50, outputCost: 1.20 },
-  'MoonshotAI/Kimi-K2.5': { inputCost: 0.50, outputCost: 2.80 },
-  'deepseek-ai/DeepSeek-V3': { inputCost: 0.60, outputCost: 1.70 },
+  'moonshotai/Kimi-K2.5': { inputCost: 0.50, outputCost: 2.80 },
   'Qwen/Qwen3.5-397B-A17B': { inputCost: 0.60, outputCost: 3.60 },
-  'Meta-Llama/Llama-3.3-70B-Instruct-Turbo': { inputCost: 0.88, outputCost: 0.88 },
-  'Zai-Org/GLM-5-FP4': { inputCost: 1.00, outputCost: 3.20 },
-  'Deepcogito/Cogito-v2.1-671B': { inputCost: 1.25, outputCost: 1.25 },
-  'Zai-Org/GLM-5.1-FP4': { inputCost: 1.40, outputCost: 4.40 },
+  'deepseek-ai/DeepSeek-V3.1': { inputCost: 0.60, outputCost: 1.70 },
+  'meta-llama/Llama-3.3-70B-Instruct-Turbo': { inputCost: 0.88, outputCost: 0.88 },
+  'zai-org/GLM-5': { inputCost: 1.00, outputCost: 3.20 },
+  'moonshotai/Kimi-K2.6': { inputCost: 1.20, outputCost: 4.50 },
+  'deepcogito/cogito-v2-1-671b': { inputCost: 1.25, outputCost: 1.25 },
+  'zai-org/GLM-5.1': { inputCost: 1.40, outputCost: 4.40 },
   'Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8': { inputCost: 2.00, outputCost: 2.00 },
+  'deepseek-ai/DeepSeek-V4-Pro': { inputCost: 2.10, outputCost: 4.40 },
   'deepseek-ai/DeepSeek-R1-0528': { inputCost: 3.00, outputCost: 7.00 },
 };
 
@@ -50,6 +47,7 @@ export async function benchmarkModel(
   const pricing = MODEL_PRICING[model] || { inputCost: 0, outputCost: 0 };
 
   try {
+    // Reduce token limit for benchmark speed; JSON resume objects rarely need 4096 tokens.
     const result = await generateResumeObject(SAMPLE_RESUMES[language].content, model);
     const endTime = Date.now();
     const durationMs = endTime - startTime;
@@ -64,13 +62,15 @@ export async function benchmarkModel(
     };
   } catch (error) {
     const endTime = Date.now();
+    const errMsg =
+      error instanceof Error ? error.message.slice(0, 120) : String(error).slice(0, 120);
     return {
       model,
       language,
       success: false,
       durationMs: endTime - startTime,
       estimatedCost: 0,
-      error: error instanceof Error ? error.message : String(error),
+      error: errMsg,
     };
   }
 }
@@ -79,16 +79,28 @@ export async function runBenchmark(
   models: string[] = MODELS,
   languages: ResumeLanguage[] = getAllLanguages()
 ): Promise<BenchmarkResult[]> {
-  const results: BenchmarkResult[] = [];
+  const tasks: Promise<BenchmarkResult>[] = [];
 
   for (const model of models) {
-    console.log(`\n[Benchmark] Testing model: ${model}`);
     for (const language of languages) {
-      console.log(`  [Benchmark] Testing language: ${language}`);
-      const result = await benchmarkModel(model, language);
-      results.push(result);
+      tasks.push(benchmarkModel(model, language));
+    }
+  }
+
+  const results = await Promise.all(tasks);
+
+  // Print results grouped by model for readability
+  const byModel = new Map<string, BenchmarkResult[]>();
+  for (const r of results) {
+    if (!byModel.has(r.model)) byModel.set(r.model, []);
+    byModel.get(r.model)!.push(r);
+  }
+
+  for (const [model, modelResults] of byModel) {
+    console.log(`\n[Benchmark] ${model}`);
+    for (const r of modelResults) {
       console.log(
-        `  [Benchmark] ${language}: ${result.success ? 'SUCCESS' : 'FAILED'} - ${result.durationMs}ms${result.error ? ` - ${result.error}` : ''}`
+        `  ${r.language}: ${r.success ? 'SUCCESS' : 'FAILED'} - ${r.durationMs}ms${r.error ? ` | ${r.error}` : ''}`
       );
     }
   }
