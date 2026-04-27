@@ -8,7 +8,11 @@ export async function GET(request: NextRequest) {
 
     const { user_id, resume, clerkUser } = await getUserData(username);
 
-    const { searchParams } = new URL(request.url);
+    if (!user_id || !resume?.resumeData || resume.status !== 'live') {
+      return new Response(`User not found`, {
+        status: 404,
+      });
+    }
 
     // Get data from resume
     const name = resume?.resumeData?.header?.name;

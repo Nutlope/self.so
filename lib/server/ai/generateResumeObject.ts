@@ -12,13 +12,14 @@ const togetherai = createTogetherAI({
   },
 });
 
-export const generateResumeObject = async (resumeText: string) => {
+export const generateResumeObject = async (
+  resumeText: string,
+  model: string = 'deepseek-ai/DeepSeek-V3'
+) => {
   const startTime = Date.now();
-  console.log('[generateResumeObject] Starting AI generation...');
   try {
-    console.log('[generateResumeObject] Calling TogetherAI...');
     const { object } = await generateObject({
-      model: togetherai('deepseek-ai/DeepSeek-V3'),
+      model: togetherai(model),
       maxRetries: 2,
       maxOutputTokens: 4096,
       schema: ResumeDataSchema,
