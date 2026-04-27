@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
               }}
             >
               <img
-                src={profileImageUrl || '/placeholder.svg'}
+                src={profileImageUrl || 'https://www.self.so/placeholder.svg'}
                 alt="Profile"
                 style={{
                   width: '360px',
@@ -158,8 +158,8 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (e: any) {
-    console.error('[OG] Error:', e);
-    return new Response(`Failed to generate the image`, {
+    console.error('[OG] Error:', e.message, e.stack);
+    return new Response(`OG Error: ${e.message}`, {
       status: 500,
     });
   }
