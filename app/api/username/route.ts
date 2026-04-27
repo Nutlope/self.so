@@ -1,5 +1,6 @@
 import { getUsernameById, updateUsername } from '@/lib/server/redisActions';
 import { currentUser } from '@clerk/nextjs/server';
+import { getClientIdentifier, rateLimit } from '@/lib/server/rateLimit';
 import { NextResponse } from 'next/server';
 
 // API Response Types
@@ -35,11 +36,27 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const ip = getClientIdentifier(request);
+    const limitResult = await rateLimit(ip, 10, 60);
+    if (!limitResult.success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      );
+    }
+
     const { username } = await request.json();
 
     if (!username || typeof username !== 'string') {
       return NextResponse.json(
         { error: 'Username is required' },
+        { status: 400 },
+      );
+    }
+
+    if (username.length > 50 || username.includes('/') || username.includes('\\')) {
+      return NextResponse.json(
+        { error: 'Invalid username format' },
         { status: 400 },
       );
     }

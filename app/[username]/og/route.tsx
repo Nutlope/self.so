@@ -21,10 +21,10 @@ export async function GET(request: NextRequest) {
       return new Response('User not found', { status: 404 });
     }
 
-    const name = resume?.resumeData?.header?.name;
-    const role = resume?.resumeData?.header?.shortAbout;
-    const location = resume?.resumeData?.header?.location;
-    const website = `www.self.so/${username}`;
+    const name = (resume?.resumeData?.header?.name || 'User').slice(0, 100);
+    const role = (resume?.resumeData?.header?.shortAbout || '').slice(0, 200);
+    const location = (resume?.resumeData?.header?.location || '').slice(0, 100);
+    const website = `www.self.so/${username}`.slice(0, 200);
     const profileImageUrl = clerkUser?.imageUrl;
 
     let fontData: ArrayBuffer;
