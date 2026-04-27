@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { generateResumeObject } from '@/lib/server/ai/generateResumeObject';
 import { SAMPLE_RESUMES, getAllLanguages, type ResumeLanguage } from './sampleResumes';
 
