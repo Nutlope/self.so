@@ -1,6 +1,15 @@
-import { ImageResponse } from '@vercel/og';
 import { NextRequest } from 'next/server';
 import { getUserData } from '../utils';
+import satori from 'satori';
+import sharp from 'sharp';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+function loadFont(): ArrayBuffer {
+  const fontPath = join(process.cwd(), 'public', 'Inter.ttf');
+  const buffer = readFileSync(fontPath);
+  return new Uint8Array(buffer).buffer;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,21 +18,24 @@ export async function GET(request: NextRequest) {
     const { user_id, resume, clerkUser } = await getUserData(username);
 
     if (!user_id || !resume?.resumeData || resume.status !== 'live') {
-      return new Response(`User not found`, {
-        status: 404,
-      });
+      return new Response('User not found', { status: 404 });
     }
 
-    // Get data from resume
     const name = resume?.resumeData?.header?.name;
     const role = resume?.resumeData?.header?.shortAbout;
     const location = resume?.resumeData?.header?.location;
     const website = `www.self.so/${username}`;
-
-    // Use profile image from Clerk user
     const profileImageUrl = clerkUser?.imageUrl;
 
-    return new ImageResponse(
+    let fontData: ArrayBuffer;
+    try {
+      fontData = loadFont();
+    } catch (e) {
+      console.error('[OG] Font load error:', e);
+      return new Response('Failed to load font', { status: 500 });
+    }
+
+    const svg = await satori(
       (
         <div
           style={{
@@ -38,7 +50,6 @@ export async function GET(request: NextRequest) {
             position: 'relative',
           }}
         >
-          {/* Logo and Location */}
           <div
             style={{
               display: 'flex',
@@ -56,33 +67,15 @@ export async function GET(request: NextRequest) {
               <img
                 src="https://self.so/logo.svg"
                 alt="Self.so Logo"
-                style={{
-                  width: '144px',
-                  height: '46px',
-                }}
+                style={{ width: '144px', height: '46px' }}
               />
             </div>
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#666',
-                textAlign: 'right',
-              }}
-            >
+            <div style={{ fontSize: '24px', color: '#666', textAlign: 'right' }}>
               {location}
             </div>
           </div>
 
-          {/* Main Content */}
-          <div
-            style={{
-              display: 'flex',
-              width: '100%',
-              marginTop: '40px',
-              height: '480px',
-            }}
-          >
-            {/* Left side - Text content */}
+          <div style={{ display: 'flex', width: '100%', marginTop: '40px', height: '480px' }}>
             <div
               style={{
                 display: 'flex',
@@ -103,21 +96,11 @@ export async function GET(request: NextRequest) {
               >
                 {name}
               </h1>
-              <p
-                style={{
-                  fontSize: '32px',
-                  color: '#444',
-                  margin: 0,
-                  lineHeight: 1.4,
-                }}
-              >
-                {role && role?.length > 90
-                  ? `${role?.substring(0, 90)}...`
-                  : role}
+              <p style={{ fontSize: '32px', color: '#444', margin: 0, lineHeight: 1.4 }}>
+                {role && role?.length > 90 ? `${role?.substring(0, 90)}...` : role}
               </p>
             </div>
 
-            {/* Right side - Profile image */}
             <div
               style={{
                 width: '40%',
@@ -127,27 +110,14 @@ export async function GET(request: NextRequest) {
               }}
             >
               <img
-                src={profileImageUrl || 'https://www.self.so/placeholder.svg'}
+                src={profileImageUrl || 'https://self.so/placeholder.svg'}
                 alt="Profile"
-                style={{
-                  width: '360px',
-                  height: '360px',
-                  borderRadius: '16px',
-                  objectFit: 'cover',
-                }}
+                style={{ width: '360px', height: '360px', borderRadius: '16px', objectFit: 'cover' }}
               />
             </div>
           </div>
 
-          {/* Website URL at bottom */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 20,
-              fontSize: '24px',
-              color: '#666',
-            }}
-          >
+          <div style={{ position: 'absolute', bottom: 20, fontSize: '24px', color: '#666' }}>
             {website}
           </div>
         </div>
@@ -155,12 +125,24 @@ export async function GET(request: NextRequest) {
       {
         width: 1200,
         height: 630,
-      },
+        fonts: [
+          { name: 'Inter', data: fontData, style: 'normal', weight: 400 },
+          { name: 'Inter', data: fontData, style: 'normal', weight: 600 },
+        ],
+      }
     );
+
+    const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
+
+    return new Response(new Uint8Array(pngBuffer), {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=31536000, immutable',
+      },
+    });
   } catch (e: any) {
     console.error('[OG] Error:', e.message, e.stack);
-    return new Response(`OG Error: ${e.message}`, {
-      status: 500,
-    });
+    return new Response(`OG Error: ${e.message}`, { status: 500 });
   }
 }
