@@ -14,17 +14,22 @@ export async function getUserData(username: string) {
     return { user_id, resume: undefined, clerkUser: undefined };
   }
 
-  const getCachedUser = unstable_cache(
-    async () => {
-      return await clerkClient.users.getUser(user_id);
-    },
-    [user_id],
-    {
-      tags: ['users'],
-      revalidate: 60,
-    }
-  );
-  const clerkUser = await getCachedUser();
+  let clerkUser;
+  try {
+    const getCachedUser = unstable_cache(
+      async () => {
+        return await clerkClient.users.getUser(user_id);
+      },
+      [user_id],
+      {
+        tags: ['users'],
+        revalidate: 60,
+      }
+    );
+    clerkUser = await getCachedUser();
+  } catch (e) {
+    console.warn('[getUserData] Clerk API error:', e);
+  }
 
   return { user_id, resume, clerkUser };
 }
