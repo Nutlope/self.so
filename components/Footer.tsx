@@ -19,7 +19,7 @@ export function Footer() {
             href={TOGETHER_LINK}
             className="text-design-black underline underline-offset-2"
           >
-            Qwen Next
+            Qwen3 Coder Next
           </a>
         </div>
 

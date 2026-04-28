@@ -22,7 +22,7 @@
 
 1. Create an account on the site with Clerk
 2. Upload a PDF which gets uploaded to S3 and does a safety check with Llama Guard
-3. Send the PDF as context to Qwen Next to extract out relevant information with structured outputs (JSON mode)
+3. Send the PDF as context to Qwen3 Coder Next to extract out relevant information with structured outputs (JSON mode)
 4. Get all the information & put it on a dynamic route for the user to be able to view & publish their site
 
 ## Cloning & running
