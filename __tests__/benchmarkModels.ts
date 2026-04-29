@@ -12,7 +12,6 @@ export interface ModelPricing {
 // Sorted by input price ascending. Includes all models the user requested.
 export const MODEL_PRICING: Record<string, ModelPricing> = {
   // Lower-cost, smaller models
-  'MiniMaxAI/MiniMax-M2.5': { inputCost: 0.30, outputCost: 1.20 },
   'MiniMaxAI/MiniMax-M2.7': { inputCost: 0.30, outputCost: 1.20 },
   'Qwen/Qwen3-Coder-Next-FP8': { inputCost: 0.50, outputCost: 1.20 },
   'moonshotai/Kimi-K2.5': { inputCost: 0.50, outputCost: 2.80 },
