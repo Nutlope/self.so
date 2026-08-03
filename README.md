@@ -13,7 +13,7 @@
 - Vercel's AI SDK as the LLM framework
 - Clerk for authentication
 - Next.js app router
-- Helicone for observability
+- Braintrust for privacy-safe resume-generation tracing and observability
 - S3 for object storage (PDFs)
 - Upstash redis for my DB
 - Vercel for hosting
@@ -31,8 +31,9 @@
 2. Create an account at [Together AI](https://togetherai.link/?utm_source=self.so&utm_medium=referral&utm_campaign=example-app) for the LLM
 3. Create an account at [Upstash](https://upstash.com/) for the Redis DB
 4. Create an account at [AWS](https://aws.amazon.com/) for the S3 bucket
-5. Create a `.env` (use the `.example.env` for reference) and replace the API keys
-6. Run `pnpm install` and `pnpm run dev` to install dependencies and run locally
+5. Optionally create a [Braintrust](https://www.braintrust.dev/) account for tracing
+6. Create a `.env` (use the `.example.env` for reference) and replace the API keys
+7. Run `pnpm install` and `pnpm run dev` to install dependencies and run locally
 
 
 ### Running Tests Locally

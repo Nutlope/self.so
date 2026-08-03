@@ -48,6 +48,7 @@
     "pdfjs-dist": "^4.2.67",
     "autoprefixer": "^10.4.20",
     "aws-sdk": "^2.1692.0",
+    "braintrust": "^3.26.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
