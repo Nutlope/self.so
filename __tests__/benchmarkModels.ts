@@ -8,23 +8,18 @@ export interface ModelPricing {
   outputCost: number;
 }
 
-// Together AI serverless chat models (verified IDs from /v1/models API)
-// Sorted by input price ascending. Includes all models the user requested.
+// Current Together AI serverless models with structured output support.
+// Sorted by input price ascending.
 export const MODEL_PRICING: Record<string, ModelPricing> = {
-  // Lower-cost, smaller models
-  'MiniMaxAI/MiniMax-M2.7': { inputCost: 0.30, outputCost: 1.20 },
-  'Qwen/Qwen3-Coder-Next-FP8': { inputCost: 0.50, outputCost: 1.20 },
-  'moonshotai/Kimi-K2.5': { inputCost: 0.50, outputCost: 2.80 },
-  'Qwen/Qwen3.5-397B-A17B': { inputCost: 0.60, outputCost: 3.60 },
-  'deepseek-ai/DeepSeek-V3.1': { inputCost: 0.60, outputCost: 1.70 },
-  'meta-llama/Llama-3.3-70B-Instruct-Turbo': { inputCost: 0.88, outputCost: 0.88 },
-  'zai-org/GLM-5': { inputCost: 1.00, outputCost: 3.20 },
+  'Qwen/Qwen3.5-9B': { inputCost: 0.17, outputCost: 0.25 },
+  'Qwen/Qwen2.5-7B-Instruct-Turbo': { inputCost: 0.30, outputCost: 0.30 },
+  'MiniMaxAI/MiniMax-M3': { inputCost: 0.30, outputCost: 1.20 },
+  'moonshotai/Kimi-K2.7-Code': { inputCost: 0.95, outputCost: 4.00 },
+  'meta-llama/Llama-3.3-70B-Instruct-Turbo': { inputCost: 1.04, outputCost: 1.04 },
   'moonshotai/Kimi-K2.6': { inputCost: 1.20, outputCost: 4.50 },
-  'deepcogito/cogito-v2-1-671b': { inputCost: 1.25, outputCost: 1.25 },
-  'zai-org/GLM-5.1': { inputCost: 1.40, outputCost: 4.40 },
-  'Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8': { inputCost: 2.00, outputCost: 2.00 },
-  'deepseek-ai/DeepSeek-V4-Pro': { inputCost: 2.10, outputCost: 4.40 },
-  'deepseek-ai/DeepSeek-R1-0528': { inputCost: 3.00, outputCost: 7.00 },
+  'zai-org/GLM-5.2': { inputCost: 1.40, outputCost: 4.40 },
+  'deepseek-ai/DeepSeek-V4-Pro': { inputCost: 1.74, outputCost: 3.48 },
+  'moonshotai/Kimi-K3': { inputCost: 3.00, outputCost: 15.00 },
 };
 
 export const MODELS = Object.keys(MODEL_PRICING);

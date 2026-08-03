@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://self.so'),
   title: 'Self.so - Resume to Website',
   description:
-    'LinkedIn to Website in one click! Powered by Together AI and Llama 3.3',
+    'LinkedIn to Website in one click! Powered by Together AI and Kimi K2.6',
   openGraph: {
     images: '/og.png',
   },

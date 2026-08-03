@@ -15,15 +15,28 @@ const togetherai = createTogetherAI({
   },
 });
 
+export const RESUME_GENERATION_CONFIG = {
+  model: 'moonshotai/Kimi-K2.6',
+  maxRetries: 1,
+  timeout: 15_000,
+  providerOptions: {
+    togetherai: {
+      reasoning: { enabled: false },
+    },
+  },
+} as const;
+
 export const generateResumeObject = async (
   resumeText: string,
-  model: string = 'Qwen/Qwen3-Coder-Next-FP8'
+  model: string = RESUME_GENERATION_CONFIG.model
 ) => {
   const startTime = Date.now();
   try {
     const { output } = await generateText({
       model: togetherai(model),
-      maxRetries: 2,
+      maxRetries: RESUME_GENERATION_CONFIG.maxRetries,
+      timeout: RESUME_GENERATION_CONFIG.timeout,
+      providerOptions: RESUME_GENERATION_CONFIG.providerOptions,
       maxOutputTokens: 4096,
       output: Output.object({
         schema: ResumeDataSchema,
