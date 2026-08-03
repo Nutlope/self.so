@@ -12,6 +12,7 @@ describe('resume generation tracing', () => {
       model: 'moonshotai/Kimi-K2.6',
       resumeText,
       maxOutputTokens: 4096,
+      reasoningEnabled: false,
     });
     const serialized = JSON.stringify(trace);
 
@@ -72,18 +73,31 @@ describe('resume generation tracing', () => {
     expect(serialized).not.toContain('Private generated summary');
   });
 
-  it('redacts API keys and resume content from provider errors', () => {
-    const apiKey = 'together-secret';
-    const resumeText = 'private resume content';
-    const serialized = JSON.stringify(
-      serializeBraintrustError(
-        new Error(`Provider rejected ${apiKey}: ${resumeText}`),
-        [apiKey, resumeText]
-      )
+  it('records only allowlisted provider error fields', () => {
+    const error = Object.assign(
+      new Error(
+        'Provider rejected ada@example.com and returned Ada Lovelace at Private Company'
+      ),
+      {
+        name: 'AI_APICallError',
+        statusCode: 429,
+        isRetryable: true,
+        responseBody: 'Generated private resume content',
+      }
     );
+    const traceError = serializeBraintrustError(error);
+    const serialized = JSON.stringify(traceError);
 
-    expect(serialized).not.toContain(apiKey);
-    expect(serialized).not.toContain(resumeText);
-    expect(serialized).toContain('[REDACTED]');
+    expect(traceError).toEqual({
+      category: 'provider_api_error',
+      statusCode: 429,
+      retryable: true,
+    });
+    expect(serialized).not.toContain('ada@example.com');
+    expect(serialized).not.toContain('Ada Lovelace');
+    expect(serialized).not.toContain('Private Company');
+    expect(serialized).not.toContain('Generated private resume content');
+    expect(serialized).not.toContain('message');
+    expect(serialized).not.toContain('stack');
   });
 });

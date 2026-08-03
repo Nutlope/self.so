@@ -73,29 +73,39 @@ export function endAndFlushBraintrustSpanAfterResponse(span: Span | undefined) {
   }
 }
 
-export function serializeBraintrustError(
-  error: unknown,
-  sensitiveValues: Array<string | null | undefined> = []
-) {
-  const redact = (value: string | undefined) => {
-    if (value === undefined) return undefined;
+export function serializeBraintrustError(error: unknown) {
+  const errorRecord =
+    typeof error === 'object' && error !== null
+      ? (error as Record<string, unknown>)
+      : undefined;
+  const statusCode = errorRecord?.statusCode;
+  const retryable = errorRecord?.isRetryable;
 
-    let redacted = value;
-    for (const sensitiveValue of sensitiveValues) {
-      if (sensitiveValue) {
-        redacted = redacted.replaceAll(sensitiveValue, '[REDACTED]');
-      }
-    }
-    return redacted;
-  };
-
-  if (error instanceof Error) {
-    return {
-      name: error.name,
-      message: redact(error.message),
-      stack: redact(error.stack),
-    };
+  let category = 'generation_error';
+  if (!(error instanceof Error)) {
+    category = 'unknown_error';
+  } else if (error.name === 'AbortError' || error.name === 'TimeoutError') {
+    category = 'timeout';
+  } else if (error.name === 'AI_APICallError') {
+    category = 'provider_api_error';
+  } else if (
+    error.name === 'AI_NoObjectGeneratedError' ||
+    error.name === 'AI_JSONParseError' ||
+    error.name === 'AI_TypeValidationError' ||
+    error.name === 'AI_InvalidResponseDataError' ||
+    error.name === 'AI_NoContentGeneratedError'
+  ) {
+    category = 'invalid_model_output';
   }
 
-  return { message: redact(String(error)) };
+  return {
+    category,
+    ...(typeof statusCode === 'number' &&
+    Number.isInteger(statusCode) &&
+    statusCode >= 100 &&
+    statusCode <= 599
+      ? { statusCode }
+      : {}),
+    ...(typeof retryable === 'boolean' ? { retryable } : {}),
+  };
 }

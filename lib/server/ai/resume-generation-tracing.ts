@@ -10,6 +10,7 @@ export function buildResumeGenerationTraceStart(args: {
   model: string;
   resumeText: string;
   maxOutputTokens: number;
+  reasoningEnabled: boolean;
 }) {
   return {
     metadata: {
@@ -18,7 +19,7 @@ export function buildResumeGenerationTraceStart(args: {
       model: args.model,
       inputCharacters: args.resumeText.length,
       maxOutputTokens: args.maxOutputTokens,
-      reasoningEnabled: false,
+      reasoningEnabled: args.reasoningEnabled,
     },
   };
 }

@@ -44,6 +44,8 @@ export const generateResumeObject = async (
       model,
       resumeText,
       maxOutputTokens,
+      reasoningEnabled:
+        RESUME_GENERATION_CONFIG.providerOptions.togetherai.reasoning.enabled,
     }),
   });
 
@@ -147,11 +149,7 @@ export const generateResumeObject = async (
     return output;
   } catch (error) {
     logBraintrustEvent(span, {
-      error: serializeBraintrustError(error, [
-        resumeText,
-        process.env.TOGETHER_API_KEY,
-        process.env.BRAINTRUST_API_KEY,
-      ]),
+      error: serializeBraintrustError(error),
       metadata: { success: false },
       metrics: { duration_ms: Date.now() - startTime },
     });
