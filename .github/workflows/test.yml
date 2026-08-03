@@ -30,4 +30,3 @@ jobs:
         run: pnpm test:run
         env:
           TOGETHER_API_KEY: ${{ secrets.TOGETHER_API_KEY }}
-          HELICONE_API_KEY: ${{ secrets.HELICONE_API_KEY }}

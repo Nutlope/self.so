@@ -2,17 +2,22 @@ import { generateText, Output } from 'ai';
 import { createTogetherAI } from '@ai-sdk/togetherai';
 import { ResumeDataSchema } from '@/lib/resume';
 import dedent from 'dedent';
+import {
+  endAndFlushBraintrustSpanAfterResponse,
+  logBraintrustEvent,
+  serializeBraintrustError,
+  startBraintrustSpan,
+} from './braintrust';
+import {
+  buildResumeGenerationTraceStart,
+  buildResumeGenerationTraceSuccess,
+} from './resume-generation-tracing';
 
 // Silence "responseFormat" warning spam in Together AI benchmark runs
 (globalThis as any).AI_SDK_LOG_WARNINGS = false;
 
 const togetherai = createTogetherAI({
   apiKey: process.env.TOGETHER_API_KEY ?? '',
-  baseURL: 'https://together.helicone.ai/v1',
-  headers: {
-    'Helicone-Auth': `Bearer ${process.env.HELICONE_API_KEY}`,
-    'Helicone-Property-AppName': 'self.so',
-  },
 });
 
 export const RESUME_GENERATION_CONFIG = {
@@ -31,13 +36,26 @@ export const generateResumeObject = async (
   model: string = RESUME_GENERATION_CONFIG.model
 ) => {
   const startTime = Date.now();
+  const maxOutputTokens = 4096;
+  const span = startBraintrustSpan({
+    name: 'self-so.generate-resume',
+    type: 'llm',
+    event: buildResumeGenerationTraceStart({
+      model,
+      resumeText,
+      maxOutputTokens,
+      reasoningEnabled:
+        RESUME_GENERATION_CONFIG.providerOptions.togetherai.reasoning.enabled,
+    }),
+  });
+
   try {
-    const { output } = await generateText({
+    const { output, usage, finishReason } = await generateText({
       model: togetherai(model),
       maxRetries: RESUME_GENERATION_CONFIG.maxRetries,
       timeout: RESUME_GENERATION_CONFIG.timeout,
       providerOptions: RESUME_GENERATION_CONFIG.providerOptions,
-      maxOutputTokens: 4096,
+      maxOutputTokens,
       output: Output.object({
         schema: ResumeDataSchema,
       }),
@@ -118,13 +136,30 @@ export const generateResumeObject = async (
       `[generateResumeObject] Total time: ${(endTime - startTime) / 1000} seconds`
     );
 
+    logBraintrustEvent(
+      span,
+      buildResumeGenerationTraceSuccess({
+        output,
+        usage,
+        finishReason,
+        durationMs: endTime - startTime,
+      })
+    );
+
     return output;
   } catch (error) {
+    logBraintrustEvent(span, {
+      error: serializeBraintrustError(error),
+      metadata: { success: false },
+      metrics: { duration_ms: Date.now() - startTime },
+    });
     const msg =
       error instanceof Error
         ? `${error.constructor.name}: ${error.message.slice(0, 120)}`
         : String(error).slice(0, 120);
     console.warn(`[generateResumeObject] ${msg}`);
     return undefined;
+  } finally {
+    endAndFlushBraintrustSpanAfterResponse(span);
   }
 };

@@ -1,3 +1,6 @@
 allowBuilds:
   '@clerk/shared': true
+  aws-sdk: false
+  braintrust: true
   esbuild: true
+  sharp: true
