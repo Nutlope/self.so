@@ -19,7 +19,7 @@ export function Footer() {
             href={TOGETHER_LINK}
             className="text-design-black underline underline-offset-2"
           >
-            Qwen3 Coder Next
+            Kimi K2.6
           </a>
         </div>
 
