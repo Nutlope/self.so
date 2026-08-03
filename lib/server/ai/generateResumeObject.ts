@@ -3,7 +3,7 @@ import { createTogetherAI } from '@ai-sdk/togetherai';
 import { ResumeDataSchema } from '@/lib/resume';
 import dedent from 'dedent';
 import {
-  endAndFlushBraintrustSpan,
+  endAndFlushBraintrustSpanAfterResponse,
   logBraintrustEvent,
   serializeBraintrustError,
   startBraintrustSpan,
@@ -162,6 +162,6 @@ export const generateResumeObject = async (
     console.warn(`[generateResumeObject] ${msg}`);
     return undefined;
   } finally {
-    await endAndFlushBraintrustSpan(span);
+    endAndFlushBraintrustSpanAfterResponse(span);
   }
 };

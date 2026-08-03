@@ -5,6 +5,7 @@ import {
   type Span,
   type StartSpanArgs,
 } from 'braintrust';
+import { after } from 'next/server';
 
 let logger: Logger<true> | null | undefined;
 
@@ -49,12 +50,26 @@ export function logBraintrustEvent(
   }
 }
 
-export async function endAndFlushBraintrustSpan(span: Span | undefined) {
+export function endAndFlushBraintrustSpanAfterResponse(span: Span | undefined) {
+  if (!span) return;
+
   try {
-    span?.end();
-    await span?.flush();
+    span.end();
   } catch (error) {
-    console.warn('Braintrust span flush failed:', error);
+    console.warn('Braintrust span finalization failed:', error);
+    return;
+  }
+
+  try {
+    after(async () => {
+      try {
+        await span.flush();
+      } catch (error) {
+        console.warn('Braintrust span flush failed:', error);
+      }
+    });
+  } catch (error) {
+    console.warn('Braintrust span flush scheduling failed:', error);
   }
 }
 
