@@ -11,14 +11,11 @@ export interface ModelPricing {
 // Current Together AI serverless models with structured output support.
 // Sorted by input price ascending.
 export const MODEL_PRICING: Record<string, ModelPricing> = {
+  'zai-org/GLM-5.3-Flash': { inputCost: 0.15, outputCost: 0.50 },
   'Qwen/Qwen3.5-9B': { inputCost: 0.17, outputCost: 0.25 },
-  'Qwen/Qwen2.5-7B-Instruct-Turbo': { inputCost: 0.30, outputCost: 0.30 },
   'MiniMaxAI/MiniMax-M3': { inputCost: 0.30, outputCost: 1.20 },
-  'moonshotai/Kimi-K2.7-Code': { inputCost: 0.95, outputCost: 4.00 },
   'meta-llama/Llama-3.3-70B-Instruct-Turbo': { inputCost: 1.04, outputCost: 1.04 },
-  'moonshotai/Kimi-K2.6': { inputCost: 1.20, outputCost: 4.50 },
-  'zai-org/GLM-5.2': { inputCost: 1.40, outputCost: 4.40 },
-  'deepseek-ai/DeepSeek-V4-Pro': { inputCost: 1.74, outputCost: 3.48 },
+  'zai-org/GLM-5.3': { inputCost: 1.40, outputCost: 4.40 },
   'moonshotai/Kimi-K3': { inputCost: 3.00, outputCost: 15.00 },
 };
 
@@ -160,7 +157,10 @@ export function printBenchmarkResults(results: BenchmarkResult[]): void {
 }
 
 if (require.main === module) {
-  runBenchmark()
+  // Optional: pass model IDs as args to benchmark a subset, e.g.
+  //   npx tsx __tests__/benchmarkModels.ts moonshotai/Kimi-K3 zai-org/GLM-5.3
+  const models = process.argv.length > 2 ? process.argv.slice(2) : MODELS;
+  runBenchmark(models)
     .then(printBenchmarkResults)
     .then(() => process.exit(0))
     .catch((e) => {

@@ -3,17 +3,17 @@
 ## Development Workflow
 
 ### ✅ What AI Assistants SHOULD Do
-- **Run builds**: Use `npm run build` or `pnpm build` to verify code changes
+- **Run builds**: Use `bun run build` to verify code changes
 - **Run tests**: Execute test suites when available
-- **Run linters**: Use `npm run lint` or `pnpm lint` to check code quality
+- **Run linters**: Use `bun run lint` to check code quality
 - **Run type checking**: Use TypeScript compiler to verify types
 - **Make code changes**: Edit files, refactor code, implement features
 - **Update dependencies**: Update package.json and run install commands
 - **Create documentation**: Update README, code comments, etc.
 
 ### ❌ What AI Assistants SHOULD NOT Do
-- **Never run development server**: Do NOT use `npm run dev`, `pnpm dev`, or any development server commands
-- **Never start production server**: Do NOT use `npm start`, `pnpm start`, or production server commands
+- **Never run development server**: Do NOT use `bun run dev`, or any development server commands
+- **Never start production server**: Do NOT use `bun run start`, or production server commands
 - **Never access external services**: Do NOT make HTTP requests to external APIs or services
 - **Never modify environment files**: Do NOT edit `.env` files or other configuration files
 - **Never commit changes**: Do NOT use git commands to commit or push changes
@@ -26,13 +26,13 @@ AI assistants should focus on code changes and verification, not on running serv
 
 ```bash
 # Build the application
-npm run build
+bun run build
 
 # Run linting
-npm run lint
+bun run lint
 
 # Run type checking
-npx tsc --noEmit
+bunx tsc --noEmit
 ```
 
 ## Testing Changes

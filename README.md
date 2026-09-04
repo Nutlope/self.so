@@ -33,20 +33,20 @@
 4. Create an account at [AWS](https://aws.amazon.com/) for the S3 bucket
 5. Optionally create a [Braintrust](https://www.braintrust.dev/) account for tracing
 6. Create a `.env` (use the `.example.env` for reference) and replace the API keys
-7. Run `pnpm install` and `pnpm run dev` to install dependencies and run locally
+7. Run `bun install` and `bun run dev` to install dependencies and run locally
 
 
 ### Running Tests Locally
 
 ```bash
 # Run all tests
-pnpm test:run
+bun run test:run
 
 # Run tests with UI
-pnpm test:ui
+bun run test:ui
 
 # Run tests in watch mode
-pnpm test
+bun run test
 ```
 
 ## Future tasks
