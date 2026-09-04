@@ -28,6 +28,7 @@ export function buildResumeGenerationTraceSuccess(args: {
   usage: TokenUsage;
   finishReason: string;
   durationMs: number;
+  model: string;
 }) {
   return {
     output: {
@@ -38,6 +39,7 @@ export function buildResumeGenerationTraceSuccess(args: {
     metadata: {
       success: true,
       finishReason: args.finishReason,
+      model: args.model,
     },
     metrics: {
       duration_ms: args.durationMs,

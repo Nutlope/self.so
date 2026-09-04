@@ -21,7 +21,8 @@ const togetherai = createTogetherAI({
 });
 
 export const RESUME_GENERATION_CONFIG = {
-  model: 'moonshotai/Kimi-K2.6',
+  model: 'MiniMaxAI/MiniMax-M3',
+  fallbackModel: 'Qwen/Qwen3.5-9B',
   maxRetries: 1,
   timeout: 15_000,
   providerOptions: {
@@ -31,35 +32,19 @@ export const RESUME_GENERATION_CONFIG = {
   },
 } as const;
 
-export const generateResumeObject = async (
-  resumeText: string,
-  model: string = RESUME_GENERATION_CONFIG.model
-) => {
-  const startTime = Date.now();
-  const maxOutputTokens = 4096;
-  const span = startBraintrustSpan({
-    name: 'self-so.generate-resume',
-    type: 'llm',
-    event: buildResumeGenerationTraceStart({
-      model,
-      resumeText,
-      maxOutputTokens,
-      reasoningEnabled:
-        RESUME_GENERATION_CONFIG.providerOptions.togetherai.reasoning.enabled,
-    }),
-  });
+const MAX_OUTPUT_TOKENS = 4096;
 
-  try {
-    const { output, usage, finishReason } = await generateText({
-      model: togetherai(model),
-      maxRetries: RESUME_GENERATION_CONFIG.maxRetries,
-      timeout: RESUME_GENERATION_CONFIG.timeout,
-      providerOptions: RESUME_GENERATION_CONFIG.providerOptions,
-      maxOutputTokens,
-      output: Output.object({
-        schema: ResumeDataSchema,
-      }),
-      prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:
+const runResumeGeneration = async (model: string, resumeText: string) => {
+  const { output, usage, finishReason } = await generateText({
+    model: togetherai(model),
+    maxRetries: RESUME_GENERATION_CONFIG.maxRetries,
+    timeout: RESUME_GENERATION_CONFIG.timeout,
+    providerOptions: RESUME_GENERATION_CONFIG.providerOptions,
+    maxOutputTokens: MAX_OUTPUT_TOKENS,
+    output: Output.object({
+      schema: ResumeDataSchema,
+    }),
+    prompt: dedent(`You are an expert resume writer. Generate a resume object from the following resume text with this EXACT structure:
 
     {
       "header": {
@@ -128,36 +113,76 @@ export const generateResumeObject = async (
 
     ${resumeText}
     `),
-    });
-    console.log('[generateResumeObject] AI generation completed');
+  });
+  return { output, usage, finishReason };
+};
 
-    const endTime = Date.now();
-    console.log(
-      `[generateResumeObject] Total time: ${(endTime - startTime) / 1000} seconds`
-    );
+export const generateResumeObject = async (
+  resumeText: string,
+  model?: string
+) => {
+  // Explicit models (benchmarks, experiments) run alone so failures stay
+  // attributable to that model; production calls go primary → fallback.
+  const models = model
+    ? [model]
+    : [RESUME_GENERATION_CONFIG.model, RESUME_GENERATION_CONFIG.fallbackModel];
+  const startTime = Date.now();
+  const span = startBraintrustSpan({
+    name: 'self-so.generate-resume',
+    type: 'llm',
+    event: buildResumeGenerationTraceStart({
+      model: models[0],
+      resumeText,
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
+      reasoningEnabled:
+        RESUME_GENERATION_CONFIG.providerOptions.togetherai.reasoning.enabled,
+    }),
+  });
 
-    logBraintrustEvent(
-      span,
-      buildResumeGenerationTraceSuccess({
-        output,
-        usage,
-        finishReason,
-        durationMs: endTime - startTime,
-      })
-    );
+  try {
+    let lastError: unknown;
+    for (const currentModel of models) {
+      try {
+        const { output, usage, finishReason } = await runResumeGeneration(
+          currentModel,
+          resumeText
+        );
+        console.log(
+          `[generateResumeObject] AI generation completed with ${currentModel}`
+        );
 
-    return output;
-  } catch (error) {
+        const endTime = Date.now();
+        console.log(
+          `[generateResumeObject] Total time: ${(endTime - startTime) / 1000} seconds`
+        );
+
+        logBraintrustEvent(
+          span,
+          buildResumeGenerationTraceSuccess({
+            output,
+            usage,
+            finishReason,
+            durationMs: endTime - startTime,
+            model: currentModel,
+          })
+        );
+
+        return output;
+      } catch (error) {
+        lastError = error;
+        const msg =
+          error instanceof Error
+            ? `${error.constructor.name}: ${error.message.slice(0, 120)}`
+            : String(error).slice(0, 120);
+        console.warn(`[generateResumeObject] ${currentModel} failed: ${msg}`);
+      }
+    }
+
     logBraintrustEvent(span, {
-      error: serializeBraintrustError(error),
+      error: serializeBraintrustError(lastError),
       metadata: { success: false },
       metrics: { duration_ms: Date.now() - startTime },
     });
-    const msg =
-      error instanceof Error
-        ? `${error.constructor.name}: ${error.message.slice(0, 120)}`
-        : String(error).slice(0, 120);
-    console.warn(`[generateResumeObject] ${msg}`);
     return undefined;
   } finally {
     endAndFlushBraintrustSpanAfterResponse(span);

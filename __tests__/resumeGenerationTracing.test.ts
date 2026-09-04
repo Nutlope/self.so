@@ -9,7 +9,7 @@ describe('resume generation tracing', () => {
   it('records useful request metadata without resume content', () => {
     const resumeText = 'Ada Lovelace\nada@example.com\nAnalytical Engine';
     const trace = buildResumeGenerationTraceStart({
-      model: 'moonshotai/Kimi-K2.6',
+      model: 'MiniMaxAI/MiniMax-M3',
       resumeText,
       maxOutputTokens: 4096,
       reasoningEnabled: false,
@@ -19,7 +19,7 @@ describe('resume generation tracing', () => {
     expect(trace.metadata).toEqual({
       provider: 'together',
       operation: 'resume-extraction',
-      model: 'moonshotai/Kimi-K2.6',
+      model: 'MiniMaxAI/MiniMax-M3',
       inputCharacters: resumeText.length,
       maxOutputTokens: 4096,
       reasoningEnabled: false,
@@ -54,6 +54,7 @@ describe('resume generation tracing', () => {
       usage: { inputTokens: 120, outputTokens: 80, totalTokens: 200 },
       finishReason: 'stop',
       durationMs: 2100,
+      model: 'MiniMaxAI/MiniMax-M3',
     });
     const serialized = JSON.stringify(trace);
 
@@ -61,6 +62,11 @@ describe('resume generation tracing', () => {
       skillCount: 2,
       workExperienceCount: 1,
       educationCount: 0,
+    });
+    expect(trace.metadata).toEqual({
+      success: true,
+      finishReason: 'stop',
+      model: 'MiniMaxAI/MiniMax-M3',
     });
     expect(trace.metrics).toEqual({
       duration_ms: 2100,
