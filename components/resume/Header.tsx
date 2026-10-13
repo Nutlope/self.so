@@ -105,19 +105,21 @@ export function Header({
           {header.shortAbout}
         </p>
 
-        <p className="max-w-md items-center text-pretty font-mono text-xs text-foreground">
-          <a
-            className="inline-flex gap-x-1.5 align-baseline leading-none hover:underline text-[#9CA0A8]"
-            href={`https://www.google.com/maps/search/${encodeURIComponent(
-              header.location || ''
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Location: ${header.location}`}
-          >
-            {header.location}
-          </a>
-        </p>
+        {header.location && (
+          <p className="max-w-md items-center text-pretty font-mono text-xs text-foreground">
+            <a
+              className="inline-flex gap-x-1.5 align-baseline leading-none hover:underline text-[#9CA0A8]"
+              href={`https://www.google.com/maps/search/${encodeURIComponent(
+                header.location || ''
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Location: ${header.location}`}
+            >
+              {header.location}
+            </a>
+          </p>
+        )}
 
         <div
           className="flex gap-x-1 pt-1 font-mono text-sm text-design-resume print:hidden"

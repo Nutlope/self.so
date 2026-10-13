@@ -1,0 +1,97 @@
+{
+  "header": {
+    "name": "Nirav Patel",
+    "shortAbout": "AI Engineer · 5 years across software, analytics, and AI",
+    "contacts": {
+      "email": "niravpatidar37@gmail.com",
+      "linkedin": "nirav-patel-39a26a151",
+      "github": "niravpatidar37"
+    },
+    "skills": [
+      "LangGraph",
+      "LangChain",
+      "Amazon Bedrock",
+      "Anthropic Claude",
+      "Azure OpenAI",
+      "MCP servers and tool schemas",
+      "hybrid search (BM25, dense, RRF)",
+      "LangSmith tracing",
+      "RAGAS",
+      "Python",
+      "FastAPI",
+      "AWS (ECS Fargate, Bedrock, IAM)",
+      "Docker",
+      "Kubernetes",
+      "Qdrant",
+      "PostgreSQL"
+    ]
+  },
+  "summary": "Engineer with 5 years across software, analytics, and AI who takes AI solutions from a customer’s problem to production, not just from a spec to code. Builds GenAI applications end to end - LLM agents, RAG and retrieval, prompt and context design, model selection, evaluation, and observability - on Python with Amazon Bedrock, Anthropic Claude, and Azure OpenAI, integrated against enterprise APIs, databases, and document repositories on AWS and GCP. Has owned products from design through production for identity-verification and compliance customers, translating ambiguous requirements into working systems and acting as the technical point of contact for what gets built and why. Turns one-off wins into reusable, guardrailed building blocks so customer teams and less-technical colleagues become self-sufficient. Comfortable troubleshooting across the full stack - applications, models, pipelines, integrations, and infrastructure - and partnering with security and compliance so every deployment meets data-protection, access-control, and Responsible AI standards.",
+  "workExperience": [
+    {
+      "company": "Adamson Systems Engineering",
+      "location": "Port Perry, ON",
+      "contract": "Full-time",
+      "title": "Agentic AI Specialist",
+      "start": "2026-09-21",
+      "end": null,
+      "description": null 
+    },
+    {
+      "company": "DeepIDV",
+      "location": "Toronto, ON",
+      "contract": "Full-time",
+      "title": "AI Engineer",
+      "start": "2025-04-01",
+      "end": "2026-09-18",
+      "description": "• Owned the Financial Screening product from design to production for identity-verification and lending customers - parsing raw bank statements into verified income, cashflow trends, and recurring obligations scored into an explainable approve/review/decline verdict, with synthetic-document forensics flagging AI-generated paystubs in 412ms at under 2% false positives.\n• Architected and delivered a four-agent production suite end to end - autonomous verification, compliance adjudication, agent-gateway integration, and deepfake detection - on LangGraph and Amazon Bedrock Agents, with multi-step reasoning over checkpointed shared state, graceful fallbacks, and Bedrock Guardrails enforcing safety policies.\n• Built Claire, a conversational AI copilot in the customer dashboard - querying live session records, risk scores, and monitoring alerts in plain English with tenant-isolated data access, handling decline explanations, anomaly analysis, and compliance narratives, and surfacing distribution shifts and velocity spikes proactively.\n• Delivered grounded retrieval for a customer-facing support agent at scale - RAG on Amazon Bedrock Knowledge Bases with hybrid search (BM25, dense vectors, RRF, Cohere re-ranking), every answer returning its evidence chain and confidence interval - and DeepAI, a natural-language analytics layer turning business questions into structured queries and regulatory-ready exports.\n• Built an MCP server and agent gateway integrating the platform with customer and internal systems as a provider-agnostic tool surface, with multi-provider routing across Claude, Bedrock, and Azure OpenAI making model choice a configuration decision rather than a code change.\n• Deployed and operated production services on AWS - asynchronous FastAPI microservices at 350ms p50 on ECS Fargate with CI/CD - and established the evaluation and observability practice: LangSmith tracing, automated eval pipelines, retrieval regression suites in CI, and drift detection on Prometheus and Grafana; cut mean time to resolution 40% and delivery timelines 20-25%."
+    },
+    {
+      "company": "Digital Pilot",
+      "location": "Ahmedabad, India",
+      "contract": "",
+      "title": "Data Analyst",
+      "start": "2021-07-01",
+      "end": "2022-10-01",
+      "description": "• Launched Power BI dashboards for real-time marketing, sales, and user-activity insight, driving self-serve analytics adoption across 20+ stakeholders and shifting decision cycles from weekly to daily.\n• Streamlined data collection and reporting in SQL and Python, automating data pipelines to cut manual reporting effort 60-70% and support ad-hoc analysis of campaign and feature impact."
+    },
+    {
+      "company": "Thingslista Automation LLP",
+      "location": "Ahmedabad, India",
+      "contract": "",
+      "title": "Software Engineer",
+      "start": "2020-10-01",
+      "end": "2021-06-01",
+      "description": "• Built automation systems and internal REST APIs using PLCs, Python, Django, and PostgreSQL to connect factory-floor hardware with internal tools, trimming manual operational work 75%.\n• Developed an end-user training program and supporting documentation for newly built tools, shortening onboarding time 25% and reducing support requests from operations teams."
+    },
+    {
+      "company": "byPeople Technologies",
+      "location": "Ahmedabad, India",
+      "contract": "",
+      "title": "Software Engineer",
+      "start": "2019-05-01",
+      "end": "2020-10-01",
+      "description": "• Promoted from intern to Software Engineer; built and maintained live client applications full-stack using Python, Django, React, and Angular in an Agile delivery environment, building interactive UI components against the APIs behind them.\n• Collaborated with senior developers on feature delivery, customization, and testing across concurrent client projects, improving delivery efficiency."
+    }
+  ],
+  "education": [
+    {
+      "school": "Durham College",
+      "degree": "Data Analysis for Business Decision Making",
+      "start": "2024",
+      "end": "2024"
+    },
+    {
+      "school": "Durham College",
+      "degree": "Artificial Intelligence Analysis, Design & Implementation",
+      "start": "2023",
+      "end": "2023"
+    },
+    {
+      "school": "GTU",
+      "degree": "Bachelor of Engineering – Information Technology",
+      "start": "2016",
+      "end": "2020"
+    }
+  ]
+}
