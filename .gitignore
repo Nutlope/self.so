@@ -32,3 +32,8 @@ next-env.d.ts
 
 # Local datasets folder
 /datasets
+
+# local resume pipeline: private extraction output and build artifacts
+/local/out/
+/site-dist/
+*.docx

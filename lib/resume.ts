@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 const MAX_STRING = 2000;
+// Senior roles routinely exceed 2000 chars of bullets; Ollama enforces maxLength while
+// generating, so a low cap silently truncates the last bullet mid-word.
+const MAX_DESCRIPTION = 4000;
 const MAX_SHORT_STRING = 500;
 const MAX_NAME_LENGTH = 200;
 const MAX_URL_LENGTH = 500;
@@ -98,7 +101,7 @@ const WorkExperienceSection = z
         .max(20)
         .nullable()
         .describe("End date in format 'YYYY-MM-DD' or null if current"),
-      description: z.string().max(MAX_STRING).describe('Job description'),
+      description: z.string().max(MAX_DESCRIPTION).describe('Job description'),
     }),
   )
   .max(MAX_WORK_EXPERIENCES);
