@@ -13,7 +13,7 @@
   "dependencies": {
     "@ai-sdk/togetherai": "^2.0.45",
     "@clerk/clerk-sdk-node": "^5.1.6",
-    "@clerk/nextjs": "^7.2.2",
+    "@clerk/nextjs": "^7.9.19",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -48,7 +48,7 @@
     "pdfjs-dist": "^4.2.67",
     "autoprefixer": "^10.4.20",
     "aws-sdk": "^2.1692.0",
-    "braintrust": "^3.26.0",
+    "braintrust": "^3.39.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -59,13 +59,13 @@
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "motion": "^12.6.2",
-    "next": "16.2.6",
+    "next": "16.3.8",
     "next-plausible": "^3.12.5",
     "next-s3-upload": "^0.3.4",
     "next-themes": "^0.4.4",
-    "react": "^19",
+    "react": "19.2.9",
     "react-day-picker": "8.10.1",
-    "react-dom": "^19",
+    "react-dom": "19.2.9",
     "react-dropzone": "14.3.8",
     "react-hook-form": "^7.54.1",
     "react-resizable-panels": "^2.1.7",
@@ -80,14 +80,18 @@
   },
   "devDependencies": {
     "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@vitest/ui": "^4.0.17",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitest/ui": "^4.1.12",
     "dotenv": "^17.2.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.17",
     "typescript": "^5",
-    "vitest": "^4.0.17"
+    "vitest": "^4.1.12"
+  },
+  "overrides": {
+    "fast-xml-parser": "^4.5.7",
+    "proxy-addr": "^2.0.8"
   },
   "trustedDependencies": [
     "@clerk/shared",
