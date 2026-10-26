@@ -1,5 +1,11 @@
 import { checkUsernameAvailability } from '@/lib/server/redisActions';
-import { getClientIdentifier, rateLimit } from '@/lib/server/rateLimit';
+import {
+  getClientIp,
+  rateLimit,
+  rateLimitResponse,
+} from '@/lib/server/rateLimit';
+import { isValidUsername } from '@/lib/config';
+import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 // API Response Types
@@ -10,14 +16,12 @@ export async function POST(
   request: Request,
 ): Promise<NextResponse<PostResponse>> {
   try {
-    const ip = getClientIdentifier(request);
-    const limitResult = await rateLimit(ip, 30, 60);
-    if (!limitResult.success) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 },
-      );
-    }
+    const { userId } = await auth();
+    const identifier = userId
+      ? `user:${userId}`
+      : `ip:${getClientIp(request)}`;
+    const limitResult = await rateLimit('checkUsername', identifier);
+    if (!limitResult.success) return rateLimitResponse(limitResult);
 
     const { searchParams } = new URL(request.url);
     const username = searchParams.get('username');
@@ -29,8 +33,7 @@ export async function POST(
       );
     }
 
-    // Reject obvious path-traversal / injection patterns
-    if (username.length > 50 || username.includes('/') || username.includes('\\')) {
+    if (!isValidUsername(username)) {
       return NextResponse.json(
         { error: 'Invalid username format' },
         { status: 400 },
