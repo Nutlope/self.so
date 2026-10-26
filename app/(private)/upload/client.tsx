@@ -22,6 +22,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+const MAX_PDF_SIZE = 15 * 1024 * 1024;
+
 type FileState =
   | { status: 'empty' }
   | { status: 'saved'; file: { name: string; url: string; size: number } };
@@ -49,7 +51,13 @@ export default function UploadPageClient() {
   }, [resume]);
 
   const handleUploadFile = async (file: File) => {
-    uploadResumeMutation.mutate(file);
+    if (file.size > MAX_PDF_SIZE) {
+      toast.error('PDF must be 15 MB or smaller');
+      return;
+    }
+    uploadResumeMutation.mutate(file, {
+      onError: () => toast.error('Failed to upload PDF. Please try again.'),
+    });
   };
 
   const handleReset = () => {
