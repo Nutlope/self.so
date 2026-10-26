@@ -4,8 +4,11 @@ import {
   createUsernameLookup,
   getResume,
   getUsernameById,
+  MAX_FILE_CONTENT_LENGTH,
   storeResume,
 } from '../../../lib/server/redisActions';
+import { rateLimit } from '@/lib/server/rateLimit';
+import RateLimitedMessage from '@/components/RateLimitedMessage';
 import { generateResumeObject } from '@/lib/server/ai/generateResumeObject';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -30,8 +33,16 @@ async function LLMProcessing({ userId }: { userId: string }) {
   let messageTip: string | undefined;
 
   if (!resume.resumeData) {
+    const limitResult = await rateLimit('generateResume', `user:${userId}`);
+    if (!limitResult.success) {
+      console.warn('[Preview] Resume generation rate limited:', limitResult.reason);
+      return <RateLimitedMessage />;
+    }
+
     console.log('[Preview] No resumeData, calling generateResumeObject...');
-    let resumeObject = await generateResumeObject(resume?.fileContent);
+    let resumeObject = await generateResumeObject(
+      resume.fileContent.slice(0, MAX_FILE_CONTENT_LENGTH),
+    );
     console.log('[Preview] generateResumeObject completed:', resumeObject ? 'success' : 'failed');
 
     if (!resumeObject) {

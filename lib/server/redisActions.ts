@@ -10,13 +10,15 @@ const REDIS_KEYS = {
   USER_NAME_PREFIX: 'user:name:',
 } as const;
 
+export const MAX_FILE_CONTENT_LENGTH = 50_000;
+
 // Define the file schema
-const FileSchema = z.object({
-  name: z.string(),
-  url: z.string().nullish(),
-  size: z.number(),
-  bucket: z.string(),
-  key: z.string(),
+export const FileSchema = z.object({
+  name: z.string().max(255),
+  url: z.string().max(2048).nullish(),
+  size: z.number().nonnegative(),
+  bucket: z.string().max(255),
+  key: z.string().max(1024),
 });
 
 const FORBIDDEN_USERNAMES = PRIVATE_ROUTES;
@@ -25,7 +27,10 @@ const FORBIDDEN_USERNAMES = PRIVATE_ROUTES;
 const ResumeSchema = z.object({
   status: z.enum(['live', 'draft']).default('draft'),
   file: FileSchema.nullish(),
-  fileContent: z.string().nullish(),
+  fileContent: z
+    .string()
+    .transform((value) => value.slice(0, MAX_FILE_CONTENT_LENGTH))
+    .nullish(),
   resumeData: ResumeDataSchema.nullish(),
 });
 

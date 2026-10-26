@@ -1,9 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { PRIVATE_ROUTES } from './lib/routes';
 
-const isPrivateRoute = createRouteMatcher(
-  PRIVATE_ROUTES.map((route) => `/${route}`),
-);
+const isPrivateRoute = createRouteMatcher([
+  ...PRIVATE_ROUTES.map((route) => `/${route}`),
+  '/api/s3-upload(.*)',
+  '/api/resume(.*)',
+  '/api/username(.*)',
+]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Protect all private routes - require authentication

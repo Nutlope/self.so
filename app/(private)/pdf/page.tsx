@@ -5,6 +5,8 @@ import { Suspense } from 'react';
 import LoadingFallback from '../../../components/LoadingFallback';
 import { scrapePdfContent } from '@/lib/server/scrapePdfContent';
 import { deleteS3File } from '@/lib/server/deleteS3File';
+import { rateLimit } from '@/lib/server/rateLimit';
+import RateLimitedMessage from '@/components/RateLimitedMessage';
 
 async function PdfProcessing({ userId }: { userId: string }) {
   const resume = await getResume(userId);
@@ -12,7 +14,10 @@ async function PdfProcessing({ userId }: { userId: string }) {
   if (!resume || !resume.file || !resume.file.url) redirect('/upload');
 
   if (!resume.fileContent) {
-    const fileContent = await scrapePdfContent(resume?.file.url);
+    const limitResult = await rateLimit('scrapePdf', `user:${userId}`);
+    if (!limitResult.success) return <RateLimitedMessage />;
+
+    const fileContent = await scrapePdfContent(resume.file);
 
     // check if the fileContent was good or bad, if bad we redirect to the upload page and delete the object from S3 and redis
     const isContentBad = false; // await isFileContentBad(fileContent);

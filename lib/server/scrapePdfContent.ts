@@ -1,31 +1,43 @@
 import * as pdfjs from 'pdfjs-dist';
+import { MAX_FILE_CONTENT_LENGTH } from '@/lib/server/redisActions';
+import { getUploadObjectUrl, MAX_PDF_SIZE } from '@/lib/server/s3';
 
-// Maximum PDF size: 15 MB
-const MAX_PDF_SIZE = 15 * 1024 * 1024;
+const MAX_PDF_PAGES = 30;
 
-function isAllowedPdfUrl(urlString: string): boolean {
-  try {
-    const url = new URL(urlString);
-    if (url.protocol !== 'https:') return false;
-
-    // Allow only S3 and common cloud storage hostnames.
-    // Adjust the allowed pattern to match your S3 bucket / CDN domain(s).
-    const allowedPatterns = [
-      /\.s3[\w.-]*\.amazonaws\.com$/i,
-      // /\.r2\.cloudflarestorage\.com$/i,
-      // /\.digitaloceanspaces\.com$/i,
-      // /\.storage\.googleapis\.com$/i,
-    ];
-
-    return allowedPatterns.some((pattern) => pattern.test(url.hostname));
-  } catch {
-    return false;
+async function readBodyWithLimit(response: Response, maxBytes: number) {
+  const declaredLength = Number(response.headers.get('content-length'));
+  if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {
+    throw new Error('PDF exceeds maximum allowed size of 15 MB');
   }
+  if (!response.body) throw new Error('Empty PDF response');
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new Error('PDF exceeds maximum allowed size of 15 MB');
+    }
+    chunks.push(value);
+  }
+
+  const data = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    data.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return data;
 }
 
-export async function scrapePdfContent(pdfUrl: string) {
-  if (!isAllowedPdfUrl(pdfUrl)) {
-    throw new Error('Invalid PDF URL: only approved storage hostnames are allowed');
+export async function scrapePdfContent(file: { bucket: string; key: string }) {
+  const pdfUrl = getUploadObjectUrl(file.bucket, file.key);
+  if (!pdfUrl) {
+    throw new Error('Invalid PDF location');
   }
 
   const controller = new AbortController();
@@ -34,13 +46,12 @@ export async function scrapePdfContent(pdfUrl: string) {
   try {
     const response = await fetch(pdfUrl, {
       signal: controller.signal,
+      redirect: 'error',
       headers: {
         // Prevent servers from sending us HTML disguised as PDF
         Accept: 'application/pdf',
       },
     });
-
-    clearTimeout(timeout);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch PDF: ${response.status}`);
@@ -51,19 +62,18 @@ export async function scrapePdfContent(pdfUrl: string) {
       throw new Error('Fetched resource is not a PDF');
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    if (arrayBuffer.byteLength > MAX_PDF_SIZE) {
-      throw new Error('PDF exceeds maximum allowed size of 15 MB');
-    }
+    const data = await readBodyWithLimit(response, MAX_PDF_SIZE);
+    clearTimeout(timeout);
 
     const pdf = await pdfjs.getDocument({
-      data: new Uint8Array(arrayBuffer),
+      data,
       useSystemFonts: true,
       isEvalSupported: false, // Critical defense-in-depth: disable JS execution in PDF.js
     }).promise;
 
     let text = '';
-    for (let i = 1; i <= pdf.numPages; i++) {
+    const pageCount = Math.min(pdf.numPages, MAX_PDF_PAGES);
+    for (let i = 1; i <= pageCount && text.length < MAX_FILE_CONTENT_LENGTH; i++) {
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
       const pageText = textContent.items
@@ -73,7 +83,7 @@ export async function scrapePdfContent(pdfUrl: string) {
     }
 
     await pdf.destroy();
-    return text;
+    return text.slice(0, MAX_FILE_CONTENT_LENGTH);
   } catch (error) {
     clearTimeout(timeout);
     throw error;

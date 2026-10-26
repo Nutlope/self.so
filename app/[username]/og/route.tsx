@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (e: any) {
-    console.error('[OG] Error:', e.message, e.stack);
-    return new Response(`OG Error: ${e.message}`, { status: 500 });
+    console.error('[OG] Error:', e?.message, e?.stack);
+    return new Response('Internal server error', { status: 500 });
   }
 }

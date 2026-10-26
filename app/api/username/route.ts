@@ -1,6 +1,8 @@
 import { getUsernameById, updateUsername } from '@/lib/server/redisActions';
 import { currentUser } from '@clerk/nextjs/server';
-import { getClientIdentifier, rateLimit } from '@/lib/server/rateLimit';
+import { rateLimit, rateLimitResponse } from '@/lib/server/rateLimit';
+import { readJsonBody } from '@/lib/server/readJsonBody';
+import { isValidUsername } from '@/lib/config';
 import { NextResponse } from 'next/server';
 
 // API Response Types
@@ -36,16 +38,15 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const ip = getClientIdentifier(request);
-    const limitResult = await rateLimit(ip, 10, 60);
-    if (!limitResult.success) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 },
-      );
+    const limitResult = await rateLimit('usernameWrite', `user:${user.id}`);
+    if (!limitResult.success) return rateLimitResponse(limitResult);
+
+    const body = await readJsonBody(request, 1024);
+    if (!body.ok) {
+      return NextResponse.json({ error: body.error }, { status: body.status });
     }
 
-    const { username } = await request.json();
+    const username = (body.data as { username?: unknown } | null)?.username;
 
     if (!username || typeof username !== 'string') {
       return NextResponse.json(
@@ -54,7 +55,7 @@ export async function POST(
       );
     }
 
-    if (username.length > 50 || username.includes('/') || username.includes('\\')) {
+    if (!isValidUsername(username)) {
       return NextResponse.json(
         { error: 'Invalid username format' },
         { status: 400 },
