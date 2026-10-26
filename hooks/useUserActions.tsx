@@ -70,8 +70,10 @@ export function useUserActions() {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return Promise.reject(new Error(error));
+      const error = await response.json().catch(() => ({}));
+      return Promise.reject(
+        new Error(error.error || 'Failed to update resume'),
+      );
     }
   };
 
